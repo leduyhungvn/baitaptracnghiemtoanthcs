@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ÔN TẬP TRẮC NGHIỆM TOÁN THCS</title>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    packages: {'[+]': ['ams', 'boldsymbol']},
+    tags: 'ams'
+  },
+  svg: {
+    fontCache: 'global',
+    scale: 1.2
+  },
+  startup: {
+    typeset: false
+  }
+};
+</script>
+<style>
+/* --- CSS CHUNG --- */
+:root {
+  /* Màu sắc điểm số */
+  --score-red: #f5222d;      /* 0-49% */
+  --score-yellow: #faad14;   /* 50-69% */
+  --score-green: #52c41a;    /* 70-79% */
+  --score-cyan: #13c2c2;     /* 80-89% */
+  --score-blue: #1890ff;     /* 90-99% */
+  --score-purple: #722ed1;   /* 100% */
+  
+  /* Màu biểu đồ */
+  --chart-correct: #52c41a;
+  --chart-wrong: #f5222d;
+  --chart-unanswered: #d9d9d9;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background-color: #f0f2f5;
+  color: #333;
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  flex: 1;
+  width: 100%;
+}
+
+/* --- CÁC NÚT VÀ INPUT --- */
+.btn {
+  display: inline-block;
+  padding: 25px 20px;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 22px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+  text-decoration: none;
+  margin: 5px;
+  width: 100%;
+}
+
+.btn:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.2); opacity: 0.95; }
+.btn:active { transform: translateY(0); }
+
+.btn-6 { background-color: #4CAF50; }
+.btn-7 { background-color: #2196F3; }
+.btn-8 { background-color: #FF9800; }
+.btn-9 { background-color: #9C27B0; }
+.btn-action { background-color: #607D8B; }
+.btn-start { background-color: #e74c3c; width: 100%; margin-top: 10px; font-size: 22px; padding: 20px; }
+.btn-back { background-color: #7f8c8d; }
+
+input[type="text"] {
+  width: 100%;
+  padding: 18px;
+  font-size: 20px;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
+input[type="text"]:focus { border-color: #3498db; outline: none; }
+
+/* --- QUẢN LÝ MÀN HÌNH --- */
+.screen {
+  display: none;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  padding: 30px;
+  animation: fadeIn 0.3s ease-in-out;
+}
+.screen.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* --- GIAO DIỆN 1: TRANG CHỦ --- */
+header { text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid #eee; }
+h1 { color: #2c3e50; margin-bottom: 10px; font-size: 2.2em; }
+
+.grade-grid { 
+  display: grid; 
+  grid-template-columns: 1fr 1fr; 
+  gap: 25px; 
+  max-width: 900px; 
+  margin: 20px auto; 
+}
+
+.contact-box { background: #eef2f7; padding: 25px; border-radius: 12px; margin-top: 30px; text-align: center; }
+.contact-box h3 { color: #e74c3c; margin-bottom: 10px; }
+.contact-box p { margin: 8px 0; font-size: 18px; }
+
+/* --- GIAO DIỆN 2: CHỌN BÀI --- */
+.chapter-btn { display: block; width: 100%; padding: 18px; margin-bottom: 10px; background: #fff; border: 2px solid #ddd; border-radius: 10px; text-align: left; font-size: 18px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+.chapter-btn:hover { background: #f9f9f9; border-color: #bbb; }
+.chapter-content { display: none; background: #f8f9fa; border: 1px solid #ddd; border-radius: 0 0 8px 8px; padding: 10px; margin-bottom: 15px; }
+.chapter-content.open { display: block; }
+.lesson-item { display: block; padding: 12px 18px; margin: 5px 0; background: white; border-radius: 6px; cursor: pointer; border: 1px solid transparent; font-size: 16px; }
+.lesson-item:hover { background: #e1f5fe; }
+.lesson-item.selected { background: #d4edda; border-color: #28a745; color: #155724; font-weight: bold; }
+
+/* --- GIAO DIỆN 3: LÀM BÀI --- */
+.quiz-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid #eee; padding-bottom: 15px; }
+.timer-box { font-size: 36px; font-weight: bold; color: #e74c3c; background: #fdecea; padding: 8px 25px; border-radius: 10px; min-width: 140px; text-align: center; }
+.question-box { font-size: 24px; margin-bottom: 25px; padding: 20px; background: #fdfdfd; border-left: 5px solid #3498db; }
+.options-list { list-style: none; }
+.option-item { padding: 18px 25px; margin-bottom: 15px; background: white; border: 2px solid #eee; border-radius: 10px; cursor: pointer; font-size: 20px; transition: all 0.2s; }
+.option-item:hover { background: #f0f8ff; border-color: #3498db; }
+.option-item.selected { background: #d1ecf1; border-color: #17a2b8; font-weight: bold; }
+
+/* --- GIAO DIỆN 4: KẾT QUẢ --- */
+.result-container {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+/* Grid System cho 4 ô */
+.result-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 20px;
+  width: 100%;
+}
+
+.cell {
+  background: white;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 250px;
+  flex-direction: column;
+}
+
+/* CELL 1: Tên & Ngày */
+.cell-info {
+  text-align: center;
+}
+.user-name-xl {
+  color: #1890ff;
+  font-weight: 800;
+  font-size: 3em;
+  line-height: 1.1;
+  margin-bottom: 15px;
+  word-break: break-word;
+}
+.user-date-xl {
+  color: #555;
+  font-weight: 600;
+  font-size: 1.8em;
+  background: #f0f2f5;
+  padding: 5px 15px;
+  border-radius: 8px;
+}
+
+/* CELL 2: Vòng tròn Điểm */
+.cell-score {
+  background: #fcfcfc;
+}
+.circle-standard {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+}
+
+.score-circle-bg {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: conic-gradient(var(--bg-color) var(--percent), #eee 0);
+  position: absolute;
+  top: 0; left: 0;
+}
+
+.score-inner {
+  width: 170px;
+  height: 170px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+  font-size: 42px;
+  font-weight: 800;
+  color: #333;
+}
+
+/* CELL 3: Biểu đồ tròn */
+.cell-chart {
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.chart-wrapper {
+  position: relative;
+  margin-bottom: 15px;
+}
+.pie-chart-standard {
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: conic-gradient(
+    var(--chart-correct) 0% 0%, 
+    var(--chart-wrong) 0% 0%, 
+    var(--chart-unanswered) 0% 100%
+  );
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.pie-chart-standard::after {
+  content: "";
+  position: absolute;
+  width: 110px;
+  height: 110px;
+  background: white;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.chart-legend-standard {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  justify-content: center;
+  font-size: 1.1em;
+}
+.legend-item { display: flex; align-items: center; gap: 8px; }
+.legend-color { width: 18px; height: 18px; border-radius: 4px; }
+
+/* CELL 4: Thời gian */
+.cell-time {
+  justify-content: center;
+  background: #fdfdfd;
+}
+.time-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 40px;
+}
+.time-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.time-label {
+  color: #999;
+  font-size: 1.1em;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+.time-val {
+  color: #2c3e50;
+  font-size: 2.2em;
+  font-weight: 800;
+}
+
+/* --- CHI TIẾT BÀI LÀM --- */
+.details-section {
+  margin-top: 20px;
+  border-top: 2px solid #eee;
+  padding-top: 20px;
+}
+.review-item {
+  padding: 15px;
+  margin-bottom: 15px;
+  border-left: 5px solid #ccc;
+  background: #fff;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.review-item.correct { border-left-color: #28a745; background: #f6fff8; }
+.review-item.incorrect { border-left-color: #dc3545; background: #fff8f8; }
+.review-item.unanswered { border-left-color: #6c757d; background: #f8f9fa; }
+.ans-correct { color: #28a745; font-weight: bold; }
+.ans-wrong { color: #dc3545; font-weight: bold; text-decoration: line-through; }
+.user-ans-label { font-weight: bold; margin-top: 5px; display: block;}
+
+/* Responsive Mobile */
+@media (max-width: 768px) {
+  .grade-grid { grid-template-columns: 1fr; }
+  .quiz-header { flex-direction: column; gap: 10px; text-align: center; }
+  .result-grid { grid-template-columns: 1fr; }
+  .user-name-xl { font-size: 2em; }
+  .user-date-xl { font-size: 1.2em; }
+  .score-inner { font-size: 32px; }
+  .circle-standard, .pie-chart-standard { width: 180px; height: 180px; }
+  .pie-chart-standard::after { width: 90px; height: 90px; }
+  .time-val { font-size: 1.8em; }
+  .timer-box { font-size: 28px; min-width: 120px; padding: 6px 15px; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- GIAO DIỆN 1: TRANG CHỦ -->
+  <div id="screen-home" class="screen active">
+    <header>
+      <h1>ÔN TẬP TRẮC NGHIỆM TOÁN THCS</h1>
+      <p style="color: #666; font-size: 1.1em;">Hệ thống câu hỏi trắc nghiệm ôn tập lớp 6, 7, 8, 9</p>
+    </header>
+
+    <div style="margin-bottom: 25px;">
+      <label style="font-weight: bold; font-size: 20px;">Họ và tên người làm bài:</label>
+      <input type="text" id="student-name-input" maxlength="40" placeholder="Nhập họ và tên (tối đa 40 ký tự)">
+    </div>
+
+    <div class="grade-grid">
+      <button class="btn btn-6" onclick="goToSelection('6')">ÔN TẬP TRẮC NGHIỆM TOÁN 6</button>
+      <button class="btn btn-7" onclick="goToSelection('7')">ÔN TẬP TRẮC NGHIỆM TOÁN 7</button>
+      <button class="btn btn-8" onclick="goToSelection('8')">ÔN TẬP TRẮC NGHIỆM TOÁN 8</button>
+      <button class="btn btn-9" onclick="goToSelection('9')">ÔN TẬP TRẮC NGHIỆM TOÁN 9</button>
+    </div>
+
+    <div class="contact-box">
+      <h3>THÔNG TIN LIÊN HỆ</h3>
+      <p><strong>Thầy Hùng:</strong> Giáo viên dạy kèm</p>
+      <p><strong>Zalo:</strong> 0967.095.025</p>
+      <p><strong>Facebook:</strong> leduyhung.vietnam</p>
+      <p><strong>Tiktok:</strong> leduyhungtiktok</p>
+      <p><strong>Youtube:</strong> byleduyhung</p>
+    </div>
+  </div>
+
+  <!-- GIAO DIỆN 2: CHỌN CHƯƠNG/BÀI -->
+  <div id="screen-selection" class="screen">
+    <header>
+      <h1 id="selection-title">ÔN TẬP TRẮC NGHIỆM TOÁN</h1>
+    </header>
+
+    <div style="margin-bottom: 20px;">
+      <label><strong>Họ tên:</strong> <span id="display-name" style="font-size: 1.1em; color: #1890ff;"></span></label>
+    </div>
+    <div style="margin-bottom: 20px;">
+      <label><strong>Mã kho bài đang chọn:</strong> <span id="display-code" style="color: #e74c3c; font-weight: bold;">Chưa chọn</span></label>
+    </div>
+
+    <div id="chapters-container"></div>
+
+    <div style="text-align: center; margin-top: 30px;">
+      <button class="btn btn-start" id="btn-do-test" onclick="startQuiz()" disabled>LÀM BÀI</button>
+      <button class="btn btn-back" onclick="goBackHome()" style="margin-top: 10px;">QUAY LẠI</button>
+    </div>
+  </div>
+
+  <!-- GIAO DIỆN 3: LÀM BÀI -->
+  <div id="screen-quiz" class="screen">
+    <div class="quiz-header">
+      <div>
+        <h3 id="quiz-title-grade">ÔN TẬP TOÁN</h3>
+        <div id="quiz-code-display" style="color: #666; font-weight: bold;">Mã kho: </div>
+      </div>
+      <div class="timer-box" id="timer">10:00</div>
+    </div>
+
+    <div id="quiz-container">
+      <div class="question-box" id="question-text">Nội dung câu hỏi...</div>
+      <ul class="options-list" id="options-list"></ul>
+    </div>
+
+    <div style="text-align: center; margin-top: 20px;">
+      <p id="quiz-instruction" style="color: #888;">Chọn đáp án để tiếp tục</p>
+    </div>
+  </div>
+
+  <!-- GIAO DIỆN 4: KẾT QUẢ -->
+  <div id="screen-result" class="screen">
+    <header>
+        <h1 id="res-title">KẾT QUẢ ÔN TẬP</h1>
+        <h3 id="res-subtitle">T6B1: Bài 1. Tập hợp</h3>
+    </header>
+
+    <div class="result-container">
+        <!-- Grid Layout 2x2 -->
+        <div class="result-grid">
+            
+            <!-- CELL 1: Tên & Ngày -->
+            <div class="cell cell-info">
+                <div class="user-name-xl" id="res-name">Họ tên</div>
+                <div class="user-date-xl" id="res-date-only">03/02/2026</div>
+            </div>
+
+            <!-- CELL 2: Vòng tròn Điểm số -->
+            <div class="cell cell-score">
+                <div class="circle-standard">
+                    <div class="score-circle-bg" id="score-circle-bg" style="--percent: 50%; --bg-color: var(--score-yellow);"></div>
+                    <div class="score-inner" id="score-text">50%</div>
+                </div>
+            </div>
+
+            <!-- CELL 3: Biểu đồ tròn & Giải thích -->
+            <div class="cell cell-chart">
+                <div class="chart-wrapper">
+                    <div class="pie-chart-standard" id="pie-chart"></div>
+                </div>
+                <div class="chart-legend-standard">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: var(--chart-correct);"></div>
+                        <span>Đúng: <strong id="legend-correct">0</strong></span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: var(--chart-wrong);"></div>
+                        <span>Sai: <strong id="legend-wrong">0</strong></span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: var(--chart-unanswered);"></div>
+                        <span>Chưa làm: <strong id="legend-unanswered">0</strong></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CELL 4: Thời gian -->
+            <div class="cell cell-time">
+                <div class="time-container">
+                    <div class="time-block">
+                        <span class="time-label">Bắt đầu</span>
+                        <span class="time-val" id="res-start">13:33</span>
+                    </div>
+                    <div class="time-block">
+                        <span class="time-label">Nộp bài</span>
+                        <span class="time-val" id="res-end">13:33</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- CHI TIẾT CÂU HỎI -->
+        <div class="details-section">
+            <h3 style="margin-bottom: 15px; color: #555; font-size: 1.3em;">Chi tiết bài làm</h3>
+            <div id="review-list"></div>
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 30px;">
+      <button class="btn btn-start" onclick="retryQuiz()">LÀM LẠI</button>
+      <button class="btn btn-back" onclick="goBackHome()">VỀ TRANG CHỦ</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Thông báo nhỏ -->
+<div id="toast" style="position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 12px 24px; border-radius: 30px; display: none; z-index: 1000;"></div>
+
+<script>
+// --- CẤU TRÚC DỮ LIỆU (GIỮ NGUYÊN) ---
+const LESSON_NAMES = {
+  'T6B1': 'Bài 1. Tập hợp', 'T6B2': 'Bài 2. Cách ghi số tự nhiên', 'T6B3': 'Bài 3. Thứ tự trong tập hợp các số tự nhiên', 'T6B4': 'Bài 4. Phép cộng và phép trừ số tự nhiên', 'T6B5': 'Bài 5. Phép nhân và phép chia số tự nhiên', 'T6B6': 'Bài 6. Lũy thừa với số mũ tự nhiên', 'T6B7': 'Bài 7. Thứ tự thực hiện các phép tính', 'T6P1': 'Phần 1. Bài tập cuối chương I',
+  'T6B8': 'Bài 8. Quan hệ chia hết và tính chất', 'T6B9': 'Bài 9. Dấu hiệu chia hết', 'T6B10': 'Bài 10. Số nguyên tố', 'T6B11': 'Bài 11. Ước chung. Ước chung lớn nhất', 'T6B12': 'Bài 12. Bội chung. Bội chung nhỏ nhất', 'T6P2': 'Phần 2. Bài tập cuối chương II',
+  'T6B13': 'Bài 13. Tập hợp các số nguyên', 'T6B14': 'Bài 14. Phép cộng và phép trừ số nguyên', 'T6B15': 'Bài 15. Quy tắc dấu ngoặc', 'T6B16': 'Bài 16. Phép nhân số nguyên', 'T6B17': 'Bài 17. Phép chia hết. Ước và bội của một số nguyên', 'T6P3': 'Phần 3. Bài tập cuối chương III',
+  'T6B18': 'Bài 18. Hình tam giác đều. Hình vuông. Hình lục giác đều', 'T6B19': 'Bài 19. Hình chữ nhật. Hình thoi. Hình bình hành. Hình thang cân', 'T6B20': 'Bài 20. Chu vi và diện tích của một số tứ giác đã học', 'T6P4': 'Phần 4. Bài tập cuối chương IV',
+  'T6B21': 'Bài 21. Hình có trục đối xứng', 'T6B22': 'Bài 22. Hình có tâm đối xứng', 'T6P5': 'Phần 5. Bài tập cuối chương V',
+  'T6B23': 'Bài 23. Mở rộng phân số. Phân số bằng nhau', 'T6B24': 'Bài 24. So sánh phân số. Hỗn số dương', 'T6B25': 'Bài 25. Phép cộng và phép trừ phân số', 'T6B26': 'Bài 26. Phép nhân và phép chia phân số', 'T6B27': 'Bài 27. Hai bài toán về phân số', 'T6P6': 'Phần 6. Bài tập cuối chương VI',
+  'T6B28': 'Bài 28. Số thập phân', 'T6B29': 'Bài 29. Tính toán với số thập phân', 'T6B30': 'Bài 30. Làm tròn và ước lượng', 'T6B31': 'Bài 31. Một số bài toán về tỉ số và tỉ số phần trăm', 'T6P7': 'Phần 7. Bài tập cuối chương VII',
+  'T6B32': 'Bài 32. Điểm và đường thẳng', 'T6B33': 'Bài 33. Điểm nằm giữa hai điểm. Tia', 'T6B34': 'Bài 34. Đoạn thẳng. Độ dài đoạn thẳng', 'T6B35': 'Bài 35. Trung điểm của đoạn thẳng', 'T6B36': 'Bài 36. Góc', 'T6B37': 'Bài 37. Số đo góc', 'T6P8': 'Phần 8. Bài tập cuối chương VIII',
+  'T6B38': 'Bài 38. Dữ liệu và thu thập dữ liệu', 'T6B39': 'Bài 39. Bảng thống kê và biểu đồ tranh', 'T6B40': 'Bài 40. Biểu đồ cột', 'T6B41': 'Bài 41. Biểu đồ cột kép', 'T6B42': 'Bài 42. Kết quả có thể và sự kiện trong trò chơi, thí nghiệm', 'T6B43': 'Bài 43. Xác suất thực nghiệm', 'T6P9': 'Phần 9. Bài tập cuối chương IX',
+  'T7B1': 'Bài 1. Tập hợp các số hữu tỉ', 'T7B2': 'Bài 2. Cộng, trừ, nhân, chia số hữu tỉ', 'T7B3': 'Bài 3. Lũy thừa với số mũ tự nhiên của một số hữu tỉ', 'T7B4': 'Bài 4. Thứ tự thực hiện các phép tính. Quy tắc chuyển vế', 'T7P1': 'Phần 1. Bài tập cuối chương I',
+  'T7B5': 'Bài 5. Làm quen với số thập phân vô hạn tuần hoàn', 'T7B6': 'Bài 6. Số vô tỉ. Căn bậc hai số học', 'T7B7': 'Bài 7. Tập hợp các số thực', 'T7P2': 'Phần 2. Bài tập cuối chương II',
+  'T7B8': 'Bài 8. Góc ở vị trí đặc biệt. Tia phân giác của một góc', 'T7B9': 'Bài 9. Hai đường thẳng song song và dấu hiệu nhận biết', 'T7B10': 'Bài 10. Tiên đề Euclid. Tính chất của hai đường thẳng song song', 'T7B11': 'Bài 11. Định lí và chứng minh định lí', 'T7P3': 'Phần 3. Bài tập cuối chương III',
+  'T7B12': 'Bài 12. Tổng các góc trong một tam giác', 'T7B13': 'Bài 13. Hai tam giác bằng nhau. Trường hợp bằng nhau thứ nhất', 'T7B14': 'Bài 14. Trường hợp bằng nhau thứ hai và thứ ba', 'T7B15': 'Bài 15. Các trường hợp bằng nhau của tam giác vuông', 'T7B16': 'Bài 16. Tam giác cân. Đường trung trực của đoạn thẳng', 'T7P4': 'Phần 4. Bài tập cuối chương IV',
+  'T7B17': 'Bài 17. Thu thập và phân loại dữ liệu', 'T7B18': 'Bài 18. Biểu đồ hình quạt tròn', 'T7B19': 'Bài 19. Biểu đồ đoạn thẳng', 'T7L106': 'Luyện tập chung trang 106', 'T7P5': 'Phần 5. Bài tập cuối chương V',
+  'T7B20': 'Bài 20. Tỉ lệ thức', 'T7B21': 'Bài 21. Tính chất của dãy tỉ số bằng nhau', 'T7B22': 'Bài 22. Đại lượng tỉ lệ thuận', 'T7B23': 'Bài 23. Đại lượng tỉ lệ nghịch', 'T7P6': 'Phần 6. Bài tập cuối chương VI',
+  'T7B24': 'Bài 24. Biểu thức đại số', 'T7B25': 'Bài 25. Đa thức một biến', 'T7B26': 'Bài 26. Phép cộng và phép trừ đa thức', 'T7B27': 'Bài 27. Phép nhân đa thức', 'T7B28': 'Bài 28. Phép chia đa thức', 'T7P7': 'Phần 7. Bài tập cuối chương VII',
+  'T7B29': 'Bài 29. Làm quen với biến cố', 'T7B30': 'Bài 30. Làm quen với xác suất của biến cố', 'T7P8': 'Phần 8. Bài tập cuối chương VIII',
+  'T7B31': 'Bài 31. Quan hệ giữa góc và cạnh đối diện trong một tam giác', 'T7B32': 'Bài 32. Quan hệ giữa đường vuông góc và đường xiên', 'T7B33': 'Bài 33. Quan hệ giữa ba cạnh của một tam giác', 'T7B34': 'Bài 34. Sự đồng quy của ba đường trung tuyến, ba đường phân giác', 'T7B35': 'Bài 35. Sự đồng quy của ba đường trung trực, ba đường cao', 'T7P9': 'Phần 9. Bài tập cuối chương IX',
+  'T7B36': 'Bài 36. Hình hộp chữ nhật và hình lập phương', 'T7B37': 'Bài 37. Hình lăng trụ đứng tam giác và hình lăng trụ đứng tứ giác', 'T7P10': 'Phần 10. Bài tập cuối chương X',
+  'T8B1': 'Bài 1. Đơn thức', 'T8B2': 'Bài 2. Đa thức', 'T8B3': 'Bài 3. Phép cộng và phép trừ đa thức', 'T8B4': 'Bài 4. Phép nhân đa thức', 'T8B5': 'Bài 5. Phép chia đa thức cho đơn thức', 'T8P1': 'Phần 1. Bài tập cuối chương 1',
+  'T8B6': 'Bài 6. Hiệu hai bình phương. Bình phương của một tổng hay một hiệu', 'T8B7': 'Bài 7. Lập phương của một tổng. Lập phương của một hiệu', 'T8B8': 'Bài 8. Tổng và hiệu hai lập phương', 'T8B9': 'Bài 9. Phân tích đa thức thành nhân tử', 'T8P2': 'Phần 2. Bài tập cuối chương 2',
+  'T8B10': 'Bài 10. Tứ giác', 'T8B11': 'Bài 11. Hình thang cân', 'T8B12': 'Bài 12. Hình bình hành', 'T8B13': 'Bài 13. Hình chữ nhật', 'T8B14': 'Bài 14. Hình thoi và hình vuông', 'T8P3': 'Phần 3. Bài tập cuối chương 3',
+  'T8B15': 'Bài 15. Định lí Thales trong tam giác', 'T8B16': 'Bài 16. Đường trung bình của tam giác', 'T8B17': 'Bài 17. Tính chất đường phân giác của tam giác', 'T8P4': 'Phần 4. Bài tập cuối chương 4',
+  'T8B18': 'Bài 18. Thu thập và phân loại dữ liệu', 'T8B19': 'Bài 19. Biểu diễn dữ liệu bằng bảng, biểu đồ', 'T8B20': 'Bài 20. Phân tích dữ liệu thống kê dựa vào biểu đồ', 'T8P5': 'Phần 5. Bài tập cuối chương 5',
+  'T8B21': 'Bài 21. Phân thức đại số', 'T8B22': 'Bài 22. Tính chất cơ bản của phân thức đại số', 'T8B23': 'Bài 23. Phép cộng và phép trừ phân thức đại số', 'T8B24': 'Bài 24. Phép nhân và phép chia phân thức đại số', 'T8P6': 'Phần 6. Bài tập cuối chương 6',
+  'T8B25': 'Bài 25. Phương trình bậc nhất một ẩn', 'T8B26': 'Bài 26. Giải bài toán bằng cách lập phương trình', 'T8B27': 'Bài 27. Khái niệm hàm số và đồ thị của hàm số', 'T8B28': 'Bài 28. Hàm số bậc nhất và đồ thị của hàm số bậc nhất', 'T8B29': 'Bài 29. Hệ số góc của đường thẳng', 'T8P7': 'Phần 7. Bài tập cuối chương 7',
+  'T8B30': 'Bài 30. Kết quả có thể và kết quả thuận lợi', 'T8B31': 'Bài 31. Cách tính xác suất của biến cố bằng tỉ số', 'T8B32': 'Bài 32. Mối liên hệ giữa xác suất thực nghiệm với xác suất ứng dụng', 'T8P8': 'Phần 8. Bài tập cuối chương 8',
+  'T8B33': 'Bài 33. Hai tam giác đồng dạng', 'T8B34': 'Bài 34. Ba trường hợp đồng dạng của hai tam giác', 'T8B35': 'Bài 35. Định lí Pythagore và ứng dụng', 'T8B36': 'Bài 36. Các trường hợp đồng dạng của hai tam giác vuông', 'T8B37': 'Bài 37. Hình đồng dạng', 'T8P9': 'Phần 9. Bài tập cuối chương 9',
+  'T8B38': 'Bài 38. Hình chóp tam giác đều', 'T8B39': 'Bài 39. Hình chóp tứ giác đều', 'T8P10': 'Phần 10. Bài tập cuối chương 10',
+  'T9B1': 'Bài 1. Khái niệm phương trình và hệ hai phương trình bậc nhất hai ẩn', 'T9B2': 'Bài 2. Giải hệ hai phương trình bậc nhất hai ẩn', 'T9B3': 'Bài 3. Giải bài toán bằng cách lập hệ phương trình', 'T9P1': 'Phần 1. Bài tập cuối chương 1',
+  'T9B4': 'Bài 4. Phương trình quy về phương trình bậc nhất một ẩn', 'T9B5': 'Bài 5. Bất đẳng thức và tính chất', 'T9B6': 'Bài 6. Bất phương trình bậc nhất một ẩn', 'T9P2': 'Phần 2. Bài tập cuối chương 2',
+  'T9B7': 'Bài 7. Căn bậc hai và căn thức bậc hai', 'T9B8': 'Bài 8. Khai căn bậc hai với phép nhân và phép chia', 'T9B9': 'Bài 9. Biến đổi đơn giản và rút gọn biểu thức chứa căn thức bậc hai', 'T9B10': 'Bài 10. Căn bậc ba và căn thức bậc ba', 'T9P3': 'Phần 3. Bài tập cuối chương 3',
+  'T9B11': 'Bài 11. Tỉ số lượng giác của góc nhọn', 'T9B12': 'Bài 12. Một số hệ thức giữa cạnh, góc trong tam giác vuông và ứng dụng', 'T9P4': 'Phần 4. Bài tập cuối chương 4',
+  'T9B13': 'Bài 13. Mở đầu về đường tròn', 'T9B14': 'Bài 14. Cung và dây của một đường tròn', 'T9B15': 'Bài 15. Độ dài của cung tròn. Diện tích hình quạt tròn và hình vành khuyên', 'T9B16': 'Bài 16. Vị trí tương đối của đường thẳng và đường tròn', 'T9B17': 'Bài 17. Vị trí tương đối của hai đường tròn', 'T9P5': 'Phần 5. Bài tập cuối chương 5',
+  'T9B18': 'Bài 18. Hàm số y = ax² (a ≠ 0)', 'T9B19': 'Bài 19. Phương trình bậc hai một ẩn', 'T9B20': 'Bài 20. Định lí Viète và ứng dụng', 'T9B21': 'Bài 21. Giải bài toán bằng cách lập phương trình', 'T9P6': 'Phần 6. Bài tập cuối chương 6',
+  'T9B22': 'Bài 22. Bảng tần số và biểu đồ tần số', 'T9B23': 'Bài 23. Bảng tần số tương đối và biểu đồ tần số tương đối', 'T9B24': 'Bài 24. Bảng tần số, tần số tương đối ghép nhóm và biểu đồ', 'T9P7': 'Phần 7. Bài tập cuối chương 7',
+  'T9B25': 'Bài 25. Phép thử ngẫu nhiên và không gian mẫu', 'T9B26': 'Bài 26. Xác suất của biến cố liên quan tới phép thử', 'T9P8': 'Phần 8. Bài tập cuối chương 8',
+  'T9B27': 'Bài 27. Góc nội tiếp', 'T9B28': 'Bài 28. Đường tròn ngoại tiếp và đường tròn nội tiếp của một tam giác', 'T9B29': 'Bài 29. Tứ giác nội tiếp', 'T9B30': 'Bài 30. Đa giác đều', 'T9P9': 'Phần 9. Bài tập cuối chương 9',
+  'T9B31': 'Bài 31. Hình trụ và hình nón', 'T9B32': 'Bài 32. Hình cầu', 'T9P10': 'Phần 10. Bài tập cuối chương 10'
+};
+
+const GRADE_STRUCTURES = {
+  '6': [
+    { title: 'CHƯƠNG I. TẬP HỢP CÁC SỐ TỰ NHIÊN', lessons: ['T6B1','T6B2','T6B3','T6B4','T6B5','T6B6','T6B7','T6P1'] },
+    { title: 'CHƯƠNG II. TÍNH CHIA HẾT TRONG TẬP HỢP CÁC SỐ TỰ NHIÊN', lessons: ['T6B8','T6B9','T6B10','T6B11','T6B12','T6P2'] },
+    { title: 'CHƯƠNG III. SỐ NGUYÊN', lessons: ['T6B13','T6B14','T6B15','T6B16','T6B17','T6P3'] },
+    { title: 'CHƯƠNG IV. MỘT SỐ HÌNH PHẲNG TRONG THỰC TIỄN', lessons: ['T6B18','T6B19','T6B20','T6P4'] },
+    { title: 'CHƯƠNG V.TÍNH ĐỐI XỨNG CỦA HÌNH PHẲNG TRONG TỰ NHIÊN', lessons: ['T6B21','T6B22','T6P5'] },
+    { title: 'CHƯƠNG VI. PHÂN SỐ', lessons: ['T6B23','T6B24','T6B25','T6B26','T6B27','T6P6'] },
+    { title: 'CHƯƠNG VII.SỐ THẬP PHÂN', lessons: ['T6B28','T6B29','T6B30','T6B31','T6P7'] },
+    { title: 'CHƯƠNG VIII. NHỮNG HÌNH HÌNH HỌC CƠ BẢN', lessons: ['T6B32','T6B33','T6B34','T6B35','T6B36','T6B37','T6P8'] },
+    { title: 'CHƯƠNG IX. DỮ LIỆU VÀ XÁC SUẤT THỰC NGHIỆM', lessons: ['T6B38','T6B39','T6B40','T6B41','T6B42','T6B43','T6P9'] }
+  ],
+  '7': [
+    { title: 'CHƯƠNG I. SỐ HỮU TỈ', lessons: ['T7B1','T7B2','T7B3','T7B4','T7P1'] },
+    { title: 'CHƯƠNG II. SỐ THỰC', lessons: ['T7B5','T7B6','T7B7','T7P2'] },
+    { title: 'CHƯƠNG III. GÓC VÀ ĐƯỜNG THẲNG SONG SONG', lessons: ['T7B8','T7B9','T7B10','T7B11','T7P3'] },
+    { title: 'CHƯƠNG IV. TAM GIÁC BẰNG NHAU', lessons: ['T7B12','T7B13','T7B14','T7B15','T7B16','T7P4'] },
+    { title: 'CHƯƠNG V. THU THẬP VÀ BIỂU DIỄN DỮ LIỆU', lessons: ['T7B17','T7B18','T7B19','T7L106','T7P5'] },
+    { title: 'CHƯƠNG VI. TỈ LỆ THỨC VÀ ĐẠI LƯỢNG TỈ LỆ', lessons: ['T7B20','T7B21','T7B22','T7B23','T7P6'] },
+    { title: 'CHƯƠNG VII. BIỂU THỨC ĐẠI SỐ VÀ ĐA THỨC MỘT BIẾN', lessons: ['T7B24','T7B25','T7B26','T7B27','T7B28','T7P7'] },
+    { title: 'CHƯƠNG VIII. LÀM QUEN VỚI BIẾN CỐ VÀ XÁC SUẤT CỦA BIẾN CỐ', lessons: ['T7B29','T7B30','T7P8'] },
+    { title: 'CHƯƠNG IX. QUAN HỆ GIỮA CÁC YẾU TỐ TRONG TAM GIÁC', lessons: ['T7B31','T7B32','T7B33','T7B34','T7B35','T7P9'] },
+    { title: 'CHƯƠNG X. MỘT SỐ HÌNH KHỐI TRONG THỰC TIỄN', lessons: ['T7B36','T7B37','T7P10'] }
+  ],
+  '8': [
+    { title: 'CHƯƠNG I. ĐA THỨC', lessons: ['T8B1','T8B2','T8B3','T8B4','T8B5','T8P1'] },
+    { title: 'CHƯƠNG II. HẰNG ĐẲNG THỨC ĐÁNG NHỚ VÀ ỨNG DỤNG', lessons: ['T8B6','T8B7','T8B8','T8B9','T8P2'] },
+    { title: 'CHƯƠNG III. TỨ GIÁC', lessons: ['T8B10','T8B11','T8B12','T8B13','T8B14','T8P3'] },
+    { title: 'CHƯƠNG IV. ĐỊNH LÍ THALES', lessons: ['T8B15','T8B16','T8B17','T8P4'] },
+    { title: 'CHƯƠNG V. DỮ LIỆU VÀ BIỂU ĐỒ', lessons: ['T8B18','T8B19','T8B20','T8P5'] },
+    { title: 'CHƯƠNG VI. PHÂN THỨC ĐẠI SỐ', lessons: ['T8B21','T8B22','T8B23','T8B24','T8P6'] },
+    { title: 'CHƯƠNG VII. PHƯƠNG TRÌNH BẬC NHẤT VÀ HÀM SỐ BẬC NHẤT', lessons: ['T8B25','T8B26','T8B27','T8B28','T8B29','T8P7'] },
+    { title: 'CHƯƠNG VIII. MỞ ĐẦU VỀ TÍNH XÁC SUẤT CỦA BIẾN CỐ', lessons: ['T8B30','T8B31','T8B32','T8P8'] },
+    { title: 'CHƯƠNG IX. TAM GIÁC ĐỒNG DẠNG', lessons: ['T8B33','T8B34','T8B35','T8B36','T8B37','T8P9'] },
+    { title: 'CHƯƠNG X. MỘT SỐ HÌNH KHỐI TRONG THỰC TIỄN', lessons: ['T8B38','T8B39','T8P10'] }
+  ],
+  '9': [
+    { title: 'CHƯƠNG I. PHƯƠNG TRÌNH VÀ HỆ HAI PHƯƠNG TRÌNH BẬC NHẤT HAI ẨN', lessons: ['T9B1','T9B2','T9B3','T9P1'] },
+    { title: 'CHƯƠNG II. PHƯƠNG TRÌNH VÀ BẤT PHƯƠNG TRÌNH BẬC NHẤT MỘT ẨN', lessons: ['T9B4','T9B5','T9B6','T9P2'] },
+    { title: 'CHƯƠNG III. CĂN BẬC HAI VÀ CĂN BẬC BA', lessons: ['T9B7','T9B8','T9B9','T9B10','T9P3'] },
+    { title: 'CHƯƠNG IV. HỆ THỨC LƯỢNG TRONG TAM GIÁC VUÔNG', lessons: ['T9B11','T9B12','T9P4'] },
+    { title: 'CHƯƠNG V. ĐƯỜNG TRÒN', lessons: ['T9B13','T9B14','T9B15','T9B16','T9B17','T9P5'] },
+    { title: 'CHƯƠNG VI. HÀM SỐ y = ax² (a ≠ 0). PHƯƠNG TRÌNH BẶC HAI MỘT ẨN.', lessons: ['T9B18','T9B19','T9B20','T9B21','T9P6'] },
+    { title: 'CHƯƠNG VII. TẦN SỐ VÀ TẦN SỐ TƯƠNG ĐỐI', lessons: ['T9B22','T9B23','T9B24','T9P7'] },
+    { title: 'CHƯƠNG VIII. XÁC SUẤT CỦA BIẾN CỐ TRONG MỘT SỐ MÔ HÌNH XÁC SUẤT ĐƠN GIẢN', lessons: ['T9B25','T9B26','T9P8'] },
+    { title: 'CHƯƠNG IX. ĐƯỜNG TRÒN NGOẠI TIẾP VÀ ĐƯỜNG TRÒN NỘI TIẾP', lessons: ['T9B27','T9B28','T9B29','T9B30','T9P9'] },
+    { title: 'CHƯƠNG X. MỘT SỐ HÌNH KHỐI TRONG THỰC TIỄN', lessons: ['T9B31','T9B32','T9P10'] }
+  ]
+};
+
+const QUESTION_BANKS = {
+  'T6B1': [
+    {id: 1, content: "Tập hợp A là tập hợp các số tự nhiên lẻ nhỏ hơn 10. Cách viết nào sau đây đúng?", correct: "$A = \\{1; 3; 5; 7; 9\\}$", wrong1: "$A = \\{2; 4; 6; 8\\}$", wrong2: "$A = (1; 3; 5; 7; 9)$", wrong3: "$A = \\{0; 1; 2; 3\\}$"},
+    {id: 2, content: "Số nào sau đây là số nguyên tố?", correct: "7", wrong1: "1", wrong2: "4", wrong3: "9"},
+    {id: 3, content: "Kết quả của $25 + 17$ là:", correct: "42", wrong1: "32", wrong2: "52", wrong3: "41"},
+    {id: 4, content: "Số tự nhiên x thỏa mãn $x - 12 = 5$ là:", correct: "17", wrong1: "7", wrong2: "60", wrong3: "15"},
+    {id: 5, content: "$3^4$ bằng:", correct: "81", wrong1: "12", wrong2: "7", wrong3: "64"},
+    {id: 6, content: "Tập hợp các ước của 12 là:", correct: "$U(12) = \\{1; 2; 3; 4; 6; 12\\}$", wrong1: "$U(12) = \\{1; 12\\}$", wrong2: "$U(12) = \\{2; 3; 4; 6\\}$", wrong3: "$U(12) = \\{12\\}$"},
+    {id: 7, content: "Phép tính nào sau đây có kết quả là 100?", correct: "$25 \\times 4$", wrong1: "$25 + 4$", wrong2: "$25 - 4$", wrong3: "$25 : 4$"},
+    {id: 8, content: "Đọc số 20504:", correct: "Hai mươi nghìn năm trăm linh bốn", wrong1: "Hai nghìn không trăm linh bốn", wrong2: "Hai trăm nghìn năm trăm linh bốn", wrong3: "Hai triệu năm trăm linh bốn"},
+    {id: 9, content: "Trong các số sau, số nào lớn nhất?", correct: "9876", wrong1: "9867", wrong2: "8976", wrong3: "9786"},
+    {id: 10, content: "Kết quả của $120 : 5$ là:", correct: "24", wrong1: "25", wrong2: "20", wrong3: "115"},
+    {id: 11, content: "Số tự nhiên nhỏ nhất có 3 chữ số là:", correct: "100", wrong1: "0", wrong2: "1", wrong3: "999"},
+    {id: 12, content: "Tổng hai số tự nhiên liên tiếp là 21. Hai số đó là:", correct: "10 và 11", wrong1: "9 và 10", wrong2: "11 và 12", wrong3: "20 và 1"},
+    {id: 13, content: "$5^2$ có nghĩa là:", correct: "$5 \\times 5$", wrong1: "$5 + 5$", wrong2: "$5 \\times 2$", wrong3: "$2 \\times 5$"},
+    {id: 14, content: "Số nào sau đây chia hết cho 3?", correct: "123", wrong1: "122", wrong2: "121", wrong3: "124"},
+    {id: 15, content: "Tập hợp con của tập hợp $\\{1; 2\\}$ là:", correct: "$\\{1\\}$", wrong1: "$\\{3\\}$", wrong2: "$\\{1; 2; 3\\}$", wrong3: "$\\emptyset$"}
+  ],
+  'T7B1': [
+    {id: 1, content: "Số nào sau đây là số hữu tỉ?", correct: "$-2/3$", wrong1: "$\\sqrt{2}$", wrong2: "$\\pi$", wrong3: "$1.1010010001...$"},
+    {id: 2, content: "Giá trị của $(-2) + (-5)$ là:", correct: "$-7$", wrong1: "$7$", wrong2: "$3$", wrong3: "$-3$"},
+    {id: 3, content: "Kết quả của $\\frac{2}{3} + \\frac{1}{3}$ là:", correct: "$1$", wrong1: "$\\frac{3}{6}$", wrong2: "$\\frac{2}{9}$", wrong3: "$0$"},
+    {id: 4, content: "Phép tính nào sau đây kết quả bằng $1$?", correct: "$\\frac{5}{7} : \\frac{5}{7}$", wrong1: "$\\frac{5}{7} \\times \\frac{5}{7}$", wrong2: "$\\frac{5}{7} + \\frac{5}{7}$", wrong3: "$\\frac{5}{7} - \\frac{5}{7}$"},
+    {id: 5, content: "Số đối của $-4$ là:", correct: "$4$", wrong1: "$-4$", wrong2: "$\\frac{1}{4}$", wrong3: "$-\\frac{1}{4}$"},
+    {id: 6, content: "Số nghịch đảo của $-2$ là:", correct: "$-\\frac{1}{2}$", wrong1: "$2$", wrong2: "$\\frac{1}{2}$", wrong3: "$-2$"},
+    {id: 7, content: "Rút gọn: $\\frac{-15}{25}$:", correct: "$-\\frac{3}{5}$", wrong1: "$-\\frac{5}{3}$", wrong2: "$\\frac{3}{5}$", wrong3: "$-\\frac{15}{25}$"},
+    {id: 8, content: "$(-3)^2$ bằng:", correct: "$9$", wrong1: "$-9$", wrong2: "$6$", wrong3: "$-6$"},
+    {id: 9, content: "So sánh: $\\frac{3}{4}$ và $\\frac{2}{3}$:", correct: "$\\frac{3}{4} > \\frac{2}{3}$", wrong1: "$\\frac{3}{4} < \\frac{2}{3}$", wrong2: "$\\frac{3}{4} = \\frac{2}{3}$", wrong3: "Không so sánh được"},
+    {id: 10, content: "Mốc nào nằm bên phải mốc 2 trên trục số?", correct: "$3$", wrong1: "$1$", wrong2: "$0$", wrong3: "$-1$"},
+    {id: 11, content: "Tổng các số hữu tỉ bằng 0?", correct: "$a + (-a)$", wrong1: "$a + a$", wrong2: "$a - a$ (nếu a=0 thôi)", wrong3: "$a \\cdot 0$"},
+    {id: 12, content: "Kết quả của $(-2) \\times (-3) \\times 4$ là:", correct: "$24$", wrong1: "$-24$", wrong2: "$12$", wrong3: "$-12$"},
+    {id: 13, content: "Phép trừ hai hữu tỉ là phép tính nào?", correct: "Phép cộng với số đối", wrong1: "Phép nhân với số đối", wrong2: "Phép chia với số nghịch đảo", wrong3: "Không thể thực hiện"},
+    {id: 14, content: "Giá trị của $| -5 |$ là:", correct: "$5$", wrong1: "$-5$", wrong2: "$\\frac{1}{5}$", wrong3: "$0$"},
+    {id: 15, content: "Phép tính nào có kết quả là số nguyên?", correct: "$\\frac{2}{3} \\times 6$", wrong1: "$\\frac{2}{3} \\times 5$", wrong2: "$\\frac{2}{3} \\times 7$", wrong3: "$\\frac{2}{3} : 6$"}
+  ],
+  'T8B1': [
+    {id: 1, content: "Đơn thức nào sau đây có bậc là 3?", correct: "$x^2y$", wrong1: "$x^2$", wrong2: "$xy$", wrong3: "$5$"},
+    {id: 2, content: "Hai đơn thức giống nhau phải có:", correct: "Cùng biến và cùng số mũ của từng biến", wrong1: "Cùng hệ số", wrong2: "Cùng số hạng tự do", wrong3: "Cùng bậc"},
+    {id: 3, content: "Tổng của $2x$ và $3x$ là:", correct: "$5x$", wrong1: "$6x$", wrong2: "$6x^2$", wrong3: "$5x^2$"},
+    {id: 4, content: "Đa thức $2x^2 - 3x + 1$ có mấy hạng tử?", correct: "3", wrong1: "1", wrong2: "2", wrong3: "0"},
+    {id: 5, content: "Bậc của đa thức $x^3 - 2x^2 + x$ là:", correct: "3", wrong1: "2", wrong2: "1", wrong3: "6"},
+    {id: 6, content: "Kết quả của $(2x)^2$ là:", correct: "$4x^2$", wrong1: "$2x^2$", wrong2: "$4x$", wrong3: "$2x^4$"},
+    {id: 7, content: "Nhân đơn thức với đa thức: $x(x + 1)$ bằng:", correct: "$x^2 + x$", wrong1: "$x^2 + 1$", wrong2: "$2x + 1$", wrong3: "$x + 1$"},
+    {id: 8, content: "Phép chia $x^3$ cho $x^2$ bằng:", correct: "$x$", wrong1: "$x^2$", wrong2: "$x^5$", wrong3: "$1$"},
+    {id: 9, content: "Đơn thức bậc nhất một biến có dạng:", correct: "$ax + b$", wrong1: "$ax^2 + bx + c$", wrong2: "$a/x$", wrong3: "$a$"},
+    {id: 10, content: "Hệ số của $-5x$ là:", correct: "$-5$", wrong1: "$5$", wrong2: "$x$", wrong3: "$0$"},
+    {id: 11, content: "Trừ $3x$ cho $5x$ được:", correct: "$-2x$", wrong1: "$2x$", wrong2: "$8x$", wrong3: "$-15x^2$"},
+    {id: 12, content: "Mũ của biến trong $x^5$ là:", correct: "5", wrong1: "$x$", wrong2: "1", wrong3: "0"},
+    {id: 13, content: "Đơn thức nào không chứa biến?", correct: "$5$", wrong1: "$2x$", wrong2: "$x^2$", wrong3: "$3xy$"},
+    {id: 14, content: "Tổng của $x$ và $-x$ là:", correct: "$0$", wrong1: "$2x$", wrong2: "$-2x^2$", wrong3: "$2$"},
+    {id: 15, content: "Phép tính $(x + 1)(x - 1)$ là:", correct: "$x^2 - 1$", wrong1: "$x^2 + 1$", wrong2: "$x^2 - 2x + 1$", wrong3: "$x^2 + 2x + 1$"}
+  ],
+  'T9B1': [
+    {id: 1, content: "Hệ phương trình nào sau đây có nghiệm $(x; y) = (1; 2)$?", correct: "$\\begin{cases} x + y = 3 \\\\ x - y = -1 \\end{cases}$", wrong1: "$\\begin{cases} x + y = 3 \\\\ x + y = 5 \\end{cases}$", wrong2: "$\\begin{cases} x + y = 3 \\\\ 2x + 2y = 6 \\end{cases}$", wrong3: "$\\begin{cases} x = 1 \\\\ y = 1 \\end{cases}$"},
+    {id: 2, content: "Phương trình $2x + 3y = 5$ có bao nhiêu nghiệm?", correct: "Vô số", wrong1: "1", wrong2: "2", wrong3: "0"},
+    {id: 3, content: "Nghiệm của hệ $\\begin{cases} y = 2x \\\\ y = x + 3 \\end{cases}$ là:", correct: "$(3; 6)$", wrong1: "$(1; 2)$", wrong2: "$(0; 0)$", wrong3: "$(2; 5)$"},
+    {id: 4, content: "Cặp số $(2; 1)$ là nghiệm của phương trình nào?", correct: "$x + y = 3$", wrong1: "$x - y = 3$", wrong2: "$2x + y = 1$", wrong3: "$x + 2y = 1$"},
+    {id: 5, content: "Hệ phương trình thu nhất là hệ:", correct: "Có nghiệm duy nhất", wrong1: "Vô nghiệm", wrong2: "Vô số nghiệm", wrong3: "Không có nghiệm thực"},
+    {id: 6, content: "Để giải hệ bằng phương pháp thế, ta:", correct: "Biểu thị một ẩn qua ẩn khác rồi thay", wrong1: "Cộng hoặc trừ hai vế", wrong2: "Nhân hai vế với cùng một số", wrong3: "Chia hai vế"},
+    {id: 7, content: "Đồ thị của phương trình $y = x + 1$ là:", correct: "Một đường thẳng", wrong1: "Một parabol", wrong2: "Một đường tròn", wrong3: "Một điểm"},
+    {id: 8, content: "Hệ $\\begin{cases} x + y = 5 \\\\ 2x + 2y = 10 \\end{cases}$ có:", correct: "Vô số nghiệm", wrong1: "Nghiệm duy nhất", wrong2: "Vô nghiệm", wrong3: "Nghiệm $(0;0)$"},
+    {id: 9, content: "Tổng của hai số là 20, hiệu của chúng là 4. Số lớn là:", correct: "12", wrong1: "8", wrong2: "10", wrong3: "16"},
+    {id: 10, content: "Nghiệm của hệ $\\begin{cases} x = 3 \\\\ x + y = 5 \\end{cases}$ là:", correct: "$(3; 2)$", wrong1: "$(2; 3)$", wrong2: "$(5; 0)$", wrong3: "$(0; 5)$"},
+    {id: 11, content: "Phương trình $x + 2y = 0$ đi qua điểm nào?", correct: "$(0; 0)$", wrong1: "$(1; 1)$", wrong2: "$(0; 1)$", wrong3: "$(2; 0)$"},
+    {id: 12, content: "Phương pháp cộng đại số dựa trên tính chất:", correct: "Nếu hai đại lượng bằng nhau thì hiệu bằng 0", wrong1: "Phép nhân", wrong2: "Phép chia", wrong3: "Phép lũy thừa"},
+    {id: 13, content: "Hệ phương trình nào sau đây vô nghiệm?", correct: "$\\begin{cases} x + y = 1 \\\\ x + y = 2 \\end{cases}$", wrong1: "$\\begin{cases} x + y = 1 \\\\ 2x + 2y = 2 \\end{cases}$", wrong2: "$\\begin{cases} x = 1 \\\\ y = 0 \\end{cases}$", wrong3: "$\\begin{cases} x - y = 0 \\\\ x = y \\end{cases}$"},
+    {id: 14, content: "Nếu $x = a, y = b$ là nghiệm của hệ thì:", correct: "Thỏa mãn cả hai phương trình", wrong1: "Chỉ thỏa mãn phương trình thứ nhất", wrong2: "Chỉ thỏa mãn phương trình thứ hai", wrong3: "Không thỏa mãn phương trình nào"},
+    {id: 15, content: "Hệ $\\begin{cases} y = 2x + 1 \\\\ y = 3x - 1 \\end{cases}$ có nghiệm là:", correct: "$(2; 5)$", wrong1: "$(1; 2)$", wrong2: "$(0; 1)$", wrong3: "$(3; 8)$"}
+  ]
+};
+
+// --- LOGIC ỨNG DỤNG ---
+let currentGrade = '';
+let currentBankCode = null;
+let currentQuestions = [];
+let currentQuestionIndex = 0;
+let userAnswers = {};
+let startTime, endTime;
+let timerInterval = null;
+const TOTAL_TIME_QUIZ = 600; // Thời gian toàn bài: 600 giây (10 phút)
+
+function showScreen(screenId) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(screenId).classList.add('active');
+  if (window.MathJax) { setTimeout(() => { MathJax.typesetPromise(); }, 200); }
+  window.scrollTo(0, 0);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  setTimeout(() => t.style.display = 'none', 2000);
+}
+
+function goToSelection(grade) {
+  const nameInput = document.getElementById('student-name-input').value.trim();
+  if (!nameInput) { alert('Vui lòng nhập họ và tên!'); return; }
+  currentGrade = grade;
+  document.getElementById('display-name').textContent = nameInput;
+  document.getElementById('selection-title').textContent = `ÔN TẬP TRẮC NGHIỆM TOÁN ${grade}`;
+  renderChapters(grade);
+  resetSelection();
+  showScreen('screen-selection');
+}
+
+function resetSelection() {
+  currentBankCode = null;
+  document.getElementById('display-code').textContent = "Chưa chọn";
+  document.getElementById('btn-do-test').disabled = true;
+}
+
+function goBackHome() { showScreen('screen-home'); }
+
+function renderChapters(grade) {
+  const container = document.getElementById('chapters-container');
+  container.innerHTML = '';
+  const chapters = GRADE_STRUCTURES[grade];
+  chapters.forEach((chap, index) => {
+    const btn = document.createElement('div');
+    btn.className = 'chapter-btn';
+    btn.textContent = (index + 1) + ". " + chap.title;
+    btn.onclick = function() { const content = this.nextElementSibling; content.classList.toggle('open'); };
+    const contentDiv = document.createElement('div');
+    contentDiv.className = 'chapter-content';
+    chap.lessons.forEach(code => {
+      const lessonDiv = document.createElement('div');
+      lessonDiv.className = 'lesson-item';
+      lessonDiv.textContent = `${code}: ${LESSON_NAMES[code] || 'Tên bài học'}`;
+      lessonDiv.dataset.code = code;
+      lessonDiv.onclick = function(e) { e.stopPropagation(); selectLesson(code); };
+      contentDiv.appendChild(lessonDiv);
+    });
+    container.appendChild(btn);
+    container.appendChild(contentDiv);
+  });
+}
+
+function selectLesson(code) {
+  document.querySelectorAll('.lesson-item').forEach(el => el.classList.remove('selected'));
+  const el = document.querySelector(`.lesson-item[data-code="${code}"]`);
+  if (el) el.classList.add('selected');
+  currentBankCode = code;
+  document.getElementById('display-code').textContent = `${code} - ${LESSON_NAMES[code]}`;
+  document.getElementById('btn-do-test').disabled = false;
+}
+
+// --- HÀM XẢO TRỘN MẢNG ---
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+function startQuiz() {
+  if (!currentBankCode) return;
+  let rawQuestions = QUESTION_BANKS[currentBankCode] || [];
+  if (rawQuestions.length === 0) {
+    rawQuestions = [{id: 1, content: "Đây là câu hỏi mẫu do kho này chưa có dữ liệu.", correct: "Đáp án A", wrong1: "Đáp án B", wrong2: "Đáp án C", wrong3: "Đáp án D"}];
+  }
+  
+  // Xáo trộn câu hỏi
+  let shuffledQuestions = [...rawQuestions].sort(() => Math.random() - 0.5);
+  if (shuffledQuestions.length > 10) shuffledQuestions = shuffledQuestions.slice(0, 10);
+  
+  currentQuestions = shuffledQuestions.map((q, idx) => {
+    // Xáo nội dung đáp án, giữ cố định A, B, C, D
+    let answerTexts = [q.correct, q.wrong1, q.wrong2, q.wrong3];
+    let shuffledTexts = shuffleArray([...answerTexts]); 
+    const labels = ['A', 'B', 'C', 'D'];
+    const options = shuffledTexts.map((text, index) => {
+      const isCorrect = (text === q.correct);
+      return {
+        label: labels[index], 
+        text: text,           
+        isCorrect: isCorrect  
+      };
+    });
+    return { ...q, uid: idx, options: options };
+  });
+
+  currentQuestionIndex = 0; userAnswers = {}; startTime = new Date();
+  document.getElementById('quiz-title-grade').textContent = `ÔN TẬP TOÁN ${currentGrade}`;
+  document.getElementById('quiz-code-display').textContent = `Mã kho: ${currentBankCode}`;
+  
+  // Khởi động đồng hồ toàn bài
+  startTimer(); 
+  
+  showScreen('screen-quiz');
+  renderQuestion();
+}
+
+function startTimer() {
+  clearInterval(timerInterval);
+  let timeLeft = TOTAL_TIME_QUIZ;
+  
+  // Hàm định dạng thời gian thành MM:SS
+  function formatTime(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  }
+  
+  const timerEl = document.getElementById('timer');
+  timerEl.textContent = formatTime(timeLeft);
+  timerEl.style.color = '#e74c3c';
+  
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    timerEl.textContent = formatTime(timeLeft);
+    
+    // Đổi màu đỏ khi còn 1 phút hoặc ít hơn
+    if (timeLeft <= 60) {
+      timerEl.style.color = 'red';
+      // Thêm hiệu ứng nhấp nháy nếu muốn (tùy chọn)
+      // timerEl.style.animation = timeLeft <= 10 ? 'blink 1s infinite' : 'none';
+    }
+    
+    if (timeLeft <= 0) { 
+      clearInterval(timerInterval); 
+      showToast("Hết giờ!"); 
+      endQuiz(); 
+    }
+  }, 1000);
+}
+
+function renderQuestion() {
+  if (currentQuestionIndex >= currentQuestions.length) { endQuiz(); return; }
+  const q = currentQuestions[currentQuestionIndex];
+  document.getElementById('question-text').innerHTML = `<strong>Câu ${currentQuestionIndex + 1}/${currentQuestions.length}:</strong> ${q.content}`;
+  const list = document.getElementById('options-list'); list.innerHTML = '';
+  q.options.forEach(opt => {
+    const li = document.createElement('li');
+    li.className = 'option-item';
+    li.innerHTML = `<strong>${opt.label}.</strong> ${opt.text}`;
+    li.onclick = () => selectAnswer(opt.label);
+    list.appendChild(li);
+  });
+  if (window.MathJax) { setTimeout(() => MathJax.typesetPromise(), 100); }
+}
+
+function selectAnswer(label) {
+  userAnswers[currentQuestionIndex] = label;
+  document.querySelectorAll('.option-item').forEach(el => {
+    el.style.pointerEvents = 'none';
+    if (el.innerHTML.startsWith(`<strong>${label}.`)) { el.classList.add('selected'); }
+  });
+  setTimeout(() => nextQuestion(), 500);
+}
+
+function nextQuestion() { currentQuestionIndex++; renderQuestion(); }
+
+function endQuiz() {
+  clearInterval(timerInterval);
+  endTime = new Date();
+  calculateResult();
+  showScreen('screen-result');
+}
+
+function calculateResult() {
+  let correctCount = 0; let wrongCount = 0; let unanswered = 0;
+  const reviewList = document.getElementById('review-list'); reviewList.innerHTML = '';
+  currentQuestions.forEach((q, idx) => {
+    const userChoice = userAnswers[idx];
+    let status = ''; let userHtml = '';
+    const correctOption = q.options.find(o => o.isCorrect);
+    if (!userChoice) {
+      status = 'unanswered'; unanswered++;
+      userHtml = `<span class="user-ans-label" style="color:gray">Bạn chưa chọn đáp án.</span>`;
+    } else if (userChoice === correctOption.label) {
+      status = 'correct'; correctCount++;
+      userHtml = `<span class="user-ans-label ans-correct">Bạn chọn: ${userChoice} (Đúng)</span>`;
+    } else {
+      status = 'incorrect'; wrongCount++;
+      userHtml = `<span class="user-ans-label ans-wrong">Bạn chọn: ${userChoice} (Sai)</span>`;
+    }
+    const item = document.createElement('div');
+    item.className = `review-item ${status}`;
+    item.innerHTML = `
+      <div style="font-weight:bold; margin-bottom:5px;">Câu ${idx+1} (${currentBankCode}-${q.id})</div>
+      <div style="margin-bottom:10px;">${q.content}</div>
+      <div style="font-size:0.9em;">
+        ${userHtml}
+        ${status !== 'correct' ? `<span class="ans-correct">Đáp án đúng: ${correctOption.label}. ${correctOption.text}</span>` : ''}
+      </div>
+    `;
+    reviewList.appendChild(item);
+  });
+  if (window.MathJax) { setTimeout(() => MathJax.typesetPromise(), 300); }
+
+  const total = currentQuestions.length;
+  const percent = Math.round((correctCount / total) * 100);
+  
+  document.getElementById('res-title').textContent = `KẾT QUẢ ÔN TẬP TOÁN ${currentGrade}`;
+  document.getElementById('res-subtitle').textContent = `${currentBankCode}: ${LESSON_NAMES[currentBankCode]}`;
+
+  // CELL 1
+  document.getElementById('res-name').textContent = document.getElementById('student-name-input').value;
+  const d = endTime.getDate().toString().padStart(2, '0');
+  const m = (endTime.getMonth() + 1).toString().padStart(2, '0');
+  const y = endTime.getFullYear();
+  document.getElementById('res-date-only').textContent = `${d}/${m}/${y}`;
+
+  // CELL 2
+  let scoreColor = 'var(--score-red)';
+  if (percent >= 100) scoreColor = 'var(--score-purple)';
+  else if (percent >= 90) scoreColor = 'var(--score-blue)';
+  else if (percent >= 80) scoreColor = 'var(--score-cyan)';
+  else if (percent >= 70) scoreColor = 'var(--score-green)';
+  else if (percent >= 50) scoreColor = 'var(--score-yellow)';
+  
+  document.getElementById('score-circle-bg').style.setProperty('--percent', `${percent}%`);
+  document.getElementById('score-circle-bg').style.setProperty('--bg-color', scoreColor);
+  document.getElementById('score-text').textContent = `${percent}%`;
+
+  // CELL 3
+  const pCorrect = Math.round((correctCount / total) * 100);
+  const pWrong = Math.round((wrongCount / total) * 100);
+  const pUnanswered = 100 - pCorrect - pWrong; 
+  
+  const pieChart = document.getElementById('pie-chart');
+  pieChart.style.background = `conic-gradient(
+    var(--chart-correct) 0% ${pCorrect}%,
+    var(--chart-wrong) ${pCorrect}% ${pCorrect + pWrong}%,
+    var(--chart-unanswered) ${pCorrect + pWrong}% 100%
+  )`;
+  
+  document.getElementById('legend-correct').textContent = correctCount;
+  document.getElementById('legend-wrong').textContent = wrongCount;
+  document.getElementById('legend-unanswered').textContent = unanswered;
+
+  // CELL 4
+  const formatTimeHHMM = (date) => {
+    const h = date.getHours().toString().padStart(2, '0');
+    const min = date.getMinutes().toString().padStart(2, '0');
+    return `${h}:${min}`;
+  };
+  document.getElementById('res-start').textContent = formatTimeHHMM(startTime);
+  document.getElementById('res-end').textContent = formatTimeHHMM(endTime);
+}
+
+function retryQuiz() { startQuiz(); }
+</script>
+</body>
+</html>
