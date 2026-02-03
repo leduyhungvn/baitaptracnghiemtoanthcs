@@ -148,87 +148,50 @@ h1 { color: #2c3e50; margin-bottom: 10px; font-size: 2.2em; }
 .option-item:hover { background: #f0f8ff; border-color: #3498db; }
 .option-item.selected { background: #d1ecf1; border-color: #17a2b8; font-weight: bold; }
 
-/* --- GIAO DIỆN 4: KẾT QUẢ --- */
+/* --- GIAO DIỆN 4: KẾT QUẢ - ĐÃ CẬP NHẬT --- */
 .result-container {
   display: flex;
   flex-direction: column;
   gap: 25px;
+  align-items: center;
 }
 
-/* Grid System cho 2 ô nằm ngang */
-.result-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  width: 100%;
-}
-
-.cell {
+/* Ô báo cáo duy nhất */
+.result-single-cell {
   background: white;
   border: 1px solid #eee;
   border-radius: 12px;
-  padding: 30px;
+  padding: 40px 30px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  min-height: 400px;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
   text-align: center;
 }
 
-/* CELL 1: Tên, Ngày & Thời gian */
-.cell-info-time {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 20px;
-}
-
+/* Tên người dùng */
 .user-name-xl {
   color: #1890ff;
   font-weight: 800;
-  font-size: 3em;
+  font-size: 2.8em;
   line-height: 1.1;
   word-break: break-word;
+  margin-bottom: 30px;
 }
 
-.user-date-xl {
-  color: #555;
-  font-weight: 600;
-  font-size: 2em;
-  background: #f0f2f5;
-  padding: 8px 20px;
-  border-radius: 8px;
-}
-
-.user-time-range {
-  color: #333;
-  font-weight: 700;
-  font-size: 1.8em;
-  background: #f8f9fa;
-  padding: 8px 20px;
-  border-radius: 8px;
-  border: 2px dashed #ddd;
-}
-
-/* CELL 2: Biểu đồ kép kết hợp */
-.cell-combined-chart {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
-}
-
+/* Biểu đồ kép */
 .combined-chart-wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 20px;
   width: 100%;
+  margin-bottom: 30px;
 }
 
-/* Biểu đồ kép: vòng ngoài (vành khuyên) + vòng trong (điểm %) */
 .combined-chart {
   position: relative;
   width: 280px;
@@ -236,7 +199,6 @@ h1 { color: #2c3e50; margin-bottom: 10px; font-size: 2.2em; }
   margin: 0 auto;
 }
 
-/* Vòng ngoài: vành khuyên Đúng/Sai/Chưa làm */
 .outer-ring {
   width: 100%;
   height: 100%;
@@ -249,7 +211,6 @@ h1 { color: #2c3e50; margin-bottom: 10px; font-size: 2.2em; }
   position: relative;
 }
 
-/* Tạo hiệu ứng vành khuyên */
 .outer-ring::after {
   content: '';
   position: absolute;
@@ -262,7 +223,6 @@ h1 { color: #2c3e50; margin-bottom: 10px; font-size: 2.2em; }
   transform: translate(-50%, -50%);
 }
 
-/* Vòng trong: điểm phần trăm */
 .inner-circle {
   position: absolute;
   width: 55%;
@@ -282,21 +242,46 @@ h1 { color: #2c3e50; margin-bottom: 10px; font-size: 2.2em; }
   z-index: 2;
 }
 
+/* Thông tin ngày và giờ */
+.result-date {
+  color: #555;
+  font-weight: 600;
+  font-size: 1.8em;
+  background: #f0f2f5;
+  padding: 10px 25px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.result-time-range {
+  color: #333;
+  font-weight: 700;
+  font-size: 1.6em;
+  background: #f8f9fa;
+  padding: 10px 25px;
+  border-radius: 8px;
+  border: 2px dashed #ddd;
+  margin-bottom: 25px;
+}
+
+/* Chú thích */
 .chart-legend-standard {
   display: flex;
-  gap: 15px;
+  gap: 20px;
   flex-wrap: wrap;
   justify-content: center;
-  font-size: 1.1em;
+  font-size: 1.2em;
+  margin-top: 10px;
 }
 .legend-item { display: flex; align-items: center; gap: 8px; }
-.legend-color { width: 18px; height: 18px; border-radius: 4px; }
+.legend-color { width: 20px; height: 20px; border-radius: 4px; }
 
 /* --- CHI TIẾT BÀI LÀM --- */
 .details-section {
-  margin-top: 20px;
+  margin-top: 30px;
   border-top: 2px solid #eee;
-  padding-top: 20px;
+  padding-top: 25px;
+  width: 100%;
 }
 .review-item {
   padding: 15px;
@@ -313,28 +298,18 @@ h1 { color: #2c3e50; margin-bottom: 10px; font-size: 2.2em; }
 .ans-wrong { color: #dc3545; font-weight: bold; text-decoration: line-through; }
 .user-ans-label { font-weight: bold; margin-top: 5px; display: block;}
 
-/* --- RESPONSIVE MOBILE - ĐÃ TỐI ƯU CHO ĐIỆN THOẠI --- */
+/* --- RESPONSIVE MOBILE --- */
 @media (max-width: 768px) {
-  /* Layout chung */
   .grade-grid { grid-template-columns: 1fr; gap: 15px; }
   .quiz-header { flex-direction: column; gap: 10px; text-align: center; }
   
   /* GIAO DIỆN BÁO CÁO KẾT QUẢ TRÊN ĐIỆN THOẠI */
-  .result-grid { 
-    grid-template-columns: 1fr; 
-    gap: 15px;
-    margin-top: 5px;
-  }
-  
-  /* Ô cell - thu nhỏ khoảng cách và chiều cao */
-  .cell {
-    min-height: auto;
-    padding: 20px 15px;
-    margin-bottom: 0;
+  .result-single-cell {
+    padding: 25px 20px;
     border-radius: 10px;
+    max-width: 100%;
   }
   
-  /* Tiêu đề báo cáo */
   header {
     margin-bottom: 15px;
     padding-bottom: 10px;
@@ -343,7 +318,6 @@ h1 { color: #2c3e50; margin-bottom: 10px; font-size: 2.2em; }
   h1 {
     font-size: 1.6em;
     margin-bottom: 5px;
-    line-height: 1.2;
   }
   
   #res-subtitle {
@@ -352,67 +326,62 @@ h1 { color: #2c3e50; margin-bottom: 10px; font-size: 2.2em; }
     color: #666;
   }
   
-  /* CELL 1: Thông tin người dùng */
+  /* Tên người dùng */
   .user-name-xl { 
     font-size: 1.8em; 
     line-height: 1.2;
-    margin-bottom: 8px;
+    margin-bottom: 20px;
     padding: 0 5px;
   }
   
-  .user-date-xl { 
-    font-size: 1.3em; 
-    padding: 6px 12px;
-    margin-bottom: 8px;
-  }
-  
-  .user-time-range { 
-    font-size: 1.2em; 
-    padding: 6px 12px;
-  }
-  
-  /* CELL 2: Biểu đồ */
-  .cell-combined-chart {
-    gap: 15px;
-  }
-  
+  /* Biểu đồ */
   .combined-chart-wrapper {
     gap: 15px;
+    margin-bottom: 20px;
   }
   
-  /* Thu nhỏ biểu đồ */
   .combined-chart { 
-    width: 180px; 
-    height: 180px; 
-    margin: 5px auto;
+    width: 200px; 
+    height: 200px; 
   }
   
   .inner-circle { 
-    font-size: 26px; 
+    font-size: 32px; 
   }
   
+  /* Thông tin ngày và giờ */
+  .result-date { 
+    font-size: 1.3em; 
+    padding: 8px 15px;
+    margin-bottom: 10px;
+  }
+  
+  .result-time-range { 
+    font-size: 1.2em; 
+    padding: 8px 15px;
+    margin-bottom: 20px;
+  }
+  
+  /* Chú thích */
   .chart-legend-standard {
-    font-size: 0.95em;
-    gap: 12px;
-    margin-top: 5px;
+    font-size: 1em;
+    gap: 15px;
   }
   
   .legend-color {
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
   }
   
   /* Phần chi tiết bài làm */
   .details-section {
-    margin-top: 15px;
-    padding-top: 15px;
-    border-top: 1px solid #eee;
+    margin-top: 20px;
+    padding-top: 20px;
   }
   
   .details-section h3 {
     font-size: 1.2em;
     margin-bottom: 10px;
-    color: #555;
   }
   
   .review-item {
@@ -488,36 +457,39 @@ h1 { color: #2c3e50; margin-bottom: 10px; font-size: 2.2em; }
     border-radius: 12px;
   }
   
-  .cell {
-    padding: 15px 10px;
+  .result-single-cell {
+    padding: 20px 15px;
   }
   
   .user-name-xl { 
     font-size: 1.6em; 
-  }
-  
-  .user-date-xl { 
-    font-size: 1.1em; 
-  }
-  
-  .user-time-range { 
-    font-size: 1em; 
+    margin-bottom: 15px;
   }
   
   .combined-chart { 
-    width: 150px; 
-    height: 150px; 
+    width: 180px; 
+    height: 180px; 
   }
   
   .inner-circle { 
-    font-size: 22px; 
+    font-size: 28px; 
+  }
+  
+  .result-date { 
+    font-size: 1.1em; 
+    padding: 8px 15px;
+  }
+  
+  .result-time-range { 
+    font-size: 1em; 
+    padding: 8px 15px;
   }
   
   .chart-legend-standard {
     font-size: 0.9em;
     flex-direction: column;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
   }
   
   h1 {
@@ -615,7 +587,7 @@ h1 { color: #2c3e50; margin-bottom: 10px; font-size: 2.2em; }
     </div>
   </div>
 
-  <!-- GIAO DIỆN 4: KẾT QUẢ -->
+  <!-- GIAO DIỆN 4: KẾT QUẢ - ĐÃ CẬP NHẬT -->
   <div id="screen-result" class="screen">
     <header>
         <h1 id="res-title">KẾT QUẢ ÔN TẬP</h1>
@@ -623,42 +595,42 @@ h1 { color: #2c3e50; margin-bottom: 10px; font-size: 2.2em; }
     </header>
 
     <div class="result-container">
-        <!-- Grid Layout 2x2 -->
-        <div class="result-grid">
-            
-            <!-- CELL 1: Tên, Ngày & Thời gian -->
-            <div class="cell cell-info-time">
-                <div class="user-name-xl" id="res-name">HULE</div>
-                <div class="user-date-xl" id="res-date-only">03/02/2026</div>
-                <div class="user-time-range" id="res-time-range">15:41 - 15:42</div>
-            </div>
+        <!-- Ô báo cáo duy nhất -->
+        <div class="result-single-cell">
+            <!-- Tên người dùng -->
+            <div class="user-name-xl" id="res-name">HULE</div>
 
-            <!-- CELL 2: Biểu đồ kép kết hợp -->
-            <div class="cell cell-combined-chart">
-                <div class="combined-chart-wrapper">
-                    <div class="combined-chart">
-                        <div class="outer-ring" id="outer-ring"></div>
-                        <div class="inner-circle" id="inner-circle">
-                            <div id="score-text">50%</div>
-                        </div>
-                    </div>
-                    <div class="chart-legend-standard">
-                        <div class="legend-item">
-                            <div class="legend-color" style="background: var(--chart-correct);"></div>
-                            <span>Đúng: <strong id="legend-correct">0</strong></span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color" style="background: var(--chart-wrong);"></div>
-                            <span>Sai: <strong id="legend-wrong">0</strong></span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color" style="background: var(--chart-unanswered);"></div>
-                            <span>Chưa làm: <strong id="legend-unanswered">0</strong></span>
-                        </div>
+            <!-- Biểu đồ kép kết hợp -->
+            <div class="combined-chart-wrapper">
+                <div class="combined-chart">
+                    <div class="outer-ring" id="outer-ring"></div>
+                    <div class="inner-circle" id="inner-circle">
+                        <div id="score-text">50%</div>
                     </div>
                 </div>
             </div>
 
+            <!-- Ngày tháng năm -->
+            <div class="result-date" id="res-date-only">03/02/2026</div>
+
+            <!-- Thời gian bắt đầu - kết thúc -->
+            <div class="result-time-range" id="res-time-range">18:26 - 18:27</div>
+
+            <!-- Chú thích -->
+            <div class="chart-legend-standard">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: var(--chart-correct);"></div>
+                    <span>Đúng: <strong id="legend-correct">0</strong></span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: var(--chart-wrong);"></div>
+                    <span>Sai: <strong id="legend-wrong">0</strong></span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: var(--chart-unanswered);"></div>
+                    <span>Chưa làm: <strong id="legend-unanswered">0</strong></span>
+                </div>
+            </div>
         </div>
 
         <!-- CHI TIẾT CÂU HỎI -->
@@ -1095,7 +1067,7 @@ function calculateResult() {
   document.getElementById('res-title').textContent = `KẾT QUẢ ÔN TẬP TOÁN ${currentGrade}`;
   document.getElementById('res-subtitle').textContent = `${currentBankCode}: ${LESSON_NAMES[currentBankCode]}`;
 
-  // CELL 1: Thông tin người dùng
+  // Thông tin người dùng
   document.getElementById('res-name').textContent = document.getElementById('student-name-input').value;
   
   // Định dạng ngày
@@ -1114,7 +1086,7 @@ function calculateResult() {
   const endStr = formatTimeHHMM(endTime);
   document.getElementById('res-time-range').textContent = `${startStr} - ${endStr}`;
 
-  // CELL 2: Biểu đồ kép
+  // Biểu đồ kép
   // Tính tỷ lệ cho biểu đồ vành khuyên ngoài
   const pCorrect = Math.round((correctCount / total) * 100);
   const pWrong = Math.round((wrongCount / total) * 100);
