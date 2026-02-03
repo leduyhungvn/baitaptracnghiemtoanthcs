@@ -989,8 +989,6 @@ function startTimer() {
     // Đổi màu đỏ khi còn 1 phút hoặc ít hơn
     if (timeLeft <= 60) {
       timerEl.style.color = 'red';
-      // Thêm hiệu ứng nhấp nháy nếu muốn (tùy chọn)
-      // timerEl.style.animation = timeLeft <= 10 ? 'blink 1s infinite' : 'none';
     }
     
     if (timeLeft <= 0) { 
@@ -1005,27 +1003,53 @@ function renderQuestion() {
   if (currentQuestionIndex >= currentQuestions.length) { endQuiz(); return; }
   const q = currentQuestions[currentQuestionIndex];
   document.getElementById('question-text').innerHTML = `<strong>Câu ${currentQuestionIndex + 1}/${currentQuestions.length}:</strong> ${q.content}`;
-  const list = document.getElementById('options-list'); list.innerHTML = '';
+  const list = document.getElementById('options-list'); 
+  
+  // Xóa toàn bộ đáp án cũ và reset trạng thái
+  list.innerHTML = '';
+  
   q.options.forEach(opt => {
     const li = document.createElement('li');
-    li.className = 'option-item';
+    li.className = 'option-item'; // Reset class, không có class 'selected'
     li.innerHTML = `<strong>${opt.label}.</strong> ${opt.text}`;
     li.onclick = () => selectAnswer(opt.label);
     list.appendChild(li);
   });
-  if (window.MathJax) { setTimeout(() => MathJax.typesetPromise(), 100); }
+  
+  // Reset pointer events cho tất cả các đáp án
+  document.querySelectorAll('.option-item').forEach(el => {
+    el.style.pointerEvents = 'auto';
+  });
+  
+  if (window.MathJax) { 
+    setTimeout(() => MathJax.typesetPromise(), 100); 
+  }
 }
 
 function selectAnswer(label) {
   userAnswers[currentQuestionIndex] = label;
+  
+  // Thêm class 'selected' cho đáp án được chọn
   document.querySelectorAll('.option-item').forEach(el => {
-    el.style.pointerEvents = 'none';
-    if (el.innerHTML.startsWith(`<strong>${label}.`)) { el.classList.add('selected'); }
+    el.style.pointerEvents = 'none'; // Vô hiệu hóa tất cả đáp án
+    if (el.innerHTML.startsWith(`<strong>${label}.`)) { 
+      el.classList.add('selected'); 
+    }
   });
-  setTimeout(() => nextQuestion(), 500);
+  
+  setTimeout(() => {
+    // Xóa class 'selected' trước khi chuyển câu (tùy chọn)
+    document.querySelectorAll('.option-item').forEach(el => {
+      el.classList.remove('selected');
+    });
+    nextQuestion(); 
+  }, 500);
 }
 
-function nextQuestion() { currentQuestionIndex++; renderQuestion(); }
+function nextQuestion() { 
+  currentQuestionIndex++; 
+  renderQuestion(); 
+}
 
 function endQuiz() {
   clearInterval(timerInterval);
