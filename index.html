@@ -313,17 +313,231 @@ h1 { color: #2c3e50; margin-bottom: 10px; font-size: 2.2em; }
 .ans-wrong { color: #dc3545; font-weight: bold; text-decoration: line-through; }
 .user-ans-label { font-weight: bold; margin-top: 5px; display: block;}
 
-/* Responsive Mobile */
+/* --- RESPONSIVE MOBILE - ĐÃ TỐI ƯU CHO ĐIỆN THOẠI --- */
 @media (max-width: 768px) {
-  .grade-grid { grid-template-columns: 1fr; }
+  /* Layout chung */
+  .grade-grid { grid-template-columns: 1fr; gap: 15px; }
   .quiz-header { flex-direction: column; gap: 10px; text-align: center; }
-  .result-grid { grid-template-columns: 1fr; }
-  .user-name-xl { font-size: 2.2em; }
-  .user-date-xl { font-size: 1.5em; }
-  .user-time-range { font-size: 1.4em; }
-  .inner-circle { font-size: 32px; }
-  .combined-chart { width: 240px; height: 240px; }
-  .timer-box { font-size: 28px; min-width: 120px; padding: 6px 15px; }
+  
+  /* GIAO DIỆN BÁO CÁO KẾT QUẢ TRÊN ĐIỆN THOẠI */
+  .result-grid { 
+    grid-template-columns: 1fr; 
+    gap: 15px;
+    margin-top: 5px;
+  }
+  
+  /* Ô cell - thu nhỏ khoảng cách và chiều cao */
+  .cell {
+    min-height: auto;
+    padding: 20px 15px;
+    margin-bottom: 0;
+    border-radius: 10px;
+  }
+  
+  /* Tiêu đề báo cáo */
+  header {
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+  }
+  
+  h1 {
+    font-size: 1.6em;
+    margin-bottom: 5px;
+    line-height: 1.2;
+  }
+  
+  #res-subtitle {
+    font-size: 1em;
+    margin-top: 5px;
+    color: #666;
+  }
+  
+  /* CELL 1: Thông tin người dùng */
+  .user-name-xl { 
+    font-size: 1.8em; 
+    line-height: 1.2;
+    margin-bottom: 8px;
+    padding: 0 5px;
+  }
+  
+  .user-date-xl { 
+    font-size: 1.3em; 
+    padding: 6px 12px;
+    margin-bottom: 8px;
+  }
+  
+  .user-time-range { 
+    font-size: 1.2em; 
+    padding: 6px 12px;
+  }
+  
+  /* CELL 2: Biểu đồ */
+  .cell-combined-chart {
+    gap: 15px;
+  }
+  
+  .combined-chart-wrapper {
+    gap: 15px;
+  }
+  
+  /* Thu nhỏ biểu đồ */
+  .combined-chart { 
+    width: 180px; 
+    height: 180px; 
+    margin: 5px auto;
+  }
+  
+  .inner-circle { 
+    font-size: 26px; 
+  }
+  
+  .chart-legend-standard {
+    font-size: 0.95em;
+    gap: 12px;
+    margin-top: 5px;
+  }
+  
+  .legend-color {
+    width: 14px;
+    height: 14px;
+  }
+  
+  /* Phần chi tiết bài làm */
+  .details-section {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+  }
+  
+  .details-section h3 {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    color: #555;
+  }
+  
+  .review-item {
+    padding: 12px;
+    margin-bottom: 10px;
+    font-size: 0.95em;
+  }
+  
+  /* Đồng hồ làm bài */
+  .timer-box { 
+    font-size: 28px; 
+    min-width: 120px; 
+    padding: 6px 15px; 
+    margin-top: 5px;
+  }
+  
+  /* Câu hỏi và đáp án */
+  .question-box { 
+    font-size: 20px; 
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+  
+  .option-item {
+    padding: 14px 18px;
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+  
+  /* Các nút */
+  .btn {
+    padding: 20px 15px;
+    font-size: 18px;
+    margin: 4px 0;
+  }
+  
+  .btn-start {
+    font-size: 20px;
+    padding: 18px;
+  }
+  
+  /* Trang chủ */
+  .contact-box {
+    padding: 20px 15px;
+    margin-top: 20px;
+  }
+  
+  .contact-box p {
+    font-size: 16px;
+    margin: 6px 0;
+  }
+  
+  /* Chọn bài */
+  .chapter-btn {
+    padding: 15px;
+    font-size: 16px;
+  }
+  
+  .lesson-item {
+    padding: 10px 15px;
+    font-size: 15px;
+  }
+}
+
+/* Điều chỉnh cho màn hình rất nhỏ */
+@media (max-width: 480px) {
+  .container {
+    padding: 15px;
+  }
+  
+  .screen {
+    padding: 20px 15px;
+    border-radius: 12px;
+  }
+  
+  .cell {
+    padding: 15px 10px;
+  }
+  
+  .user-name-xl { 
+    font-size: 1.6em; 
+  }
+  
+  .user-date-xl { 
+    font-size: 1.1em; 
+  }
+  
+  .user-time-range { 
+    font-size: 1em; 
+  }
+  
+  .combined-chart { 
+    width: 150px; 
+    height: 150px; 
+  }
+  
+  .inner-circle { 
+    font-size: 22px; 
+  }
+  
+  .chart-legend-standard {
+    font-size: 0.9em;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  
+  h1 {
+    font-size: 1.4em;
+  }
+  
+  #res-subtitle {
+    font-size: 0.9em;
+  }
+  
+  /* Giảm padding cho các nút trên màn hình nhỏ */
+  .btn {
+    padding: 16px 12px;
+    font-size: 16px;
+  }
+  
+  input[type="text"] {
+    padding: 14px;
+    font-size: 18px;
+  }
 }
 </style>
 </head>
@@ -468,7 +682,7 @@ h1 { color: #2c3e50; margin-bottom: 10px; font-size: 2.2em; }
 <script>
 // --- CẤU TRÚC DỮ LIỆU (GIỮ NGUYÊN) ---
 const LESSON_NAMES = {
-  'T6B1': 'Bài 1. Tập hợp', 'T6B2': 'Bài 2. Cách ghi số tự nhiên', 'T6B3': 'Bài 3. Thứ tự trong tập hợp các số tự nhiên', 'T6B4': 'Bài 4. Phép cộng và phép trừ số tự nhiên', 'T6B5': 'Bài 5. Phép nhân và phép chia số tự nhiên', 'T6B6': 'Bài 6. Lũy thừa với số mũ tự nhiên', 'T7B7': 'Bài 7. Thứ tự thực hiện các phép tính', 'T6P1': 'Phần 1. Bài tập cuối chương I',
+  'T6B1': 'Bài 1. Tập hợp', 'T6B2': 'Bài 2. Cách ghi số tự nhiên', 'T6B3': 'Bài 3. Thứ tự trong tập hợp các số tự nhiên', 'T6B4': 'Bài 4. Phép cộng và phép trừ số tự nhiên', 'T6B5': 'Bài 5. Phép nhân và phép chia số tự nhiên', 'T6B6': 'Bài 6. Lũy thừa với số mũ tự nhiên', 'T6B7': 'Bài 7. Thứ tự thực hiện các phép tính', 'T6P1': 'Phần 1. Bài tập cuối chương I',
   'T6B8': 'Bài 8. Quan hệ chia hết và tính chất', 'T6B9': 'Bài 9. Dấu hiệu chia hết', 'T6B10': 'Bài 10. Số nguyên tố', 'T6B11': 'Bài 11. Ước chung. Ước chung lớn nhất', 'T6B12': 'Bài 12. Bội chung. Bội chung nhỏ nhất', 'T6P2': 'Phần 2. Bài tập cuối chương II',
   'T6B13': 'Bài 13. Tập hợp các số nguyên', 'T6B14': 'Bài 14. Phép cộng và phép trừ số nguyên', 'T6B15': 'Bài 15. Quy tắc dấu ngoặc', 'T6B16': 'Bài 16. Phép nhân số nguyên', 'T6B17': 'Bài 17. Phép chia hết. Ước và bội của một số nguyên', 'T6P3': 'Phần 3. Bài tập cuối chương III',
   'T6B18': 'Bài 18. Hình tam giác đều. Hình vuông. Hình lục giác đều', 'T6B19': 'Bài 19. Hình chữ nhật. Hình thoi. Hình bình hành. Hình thang cân', 'T6B20': 'Bài 20. Chu vi và diện tích của một số tứ giác đã học', 'T6P4': 'Phần 4. Bài tập cuối chương IV',
