@@ -155,11 +155,10 @@ h1 { color: #2c3e50; margin-bottom: 10px; font-size: 2.2em; }
   gap: 25px;
 }
 
-/* Grid System cho 4 ô */
+/* Grid System cho 2 ô nằm ngang */
 .result-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto auto;
   gap: 20px;
   width: 100%;
 }
@@ -168,105 +167,121 @@ h1 { color: #2c3e50; margin-bottom: 10px; font-size: 2.2em; }
   background: white;
   border: 1px solid #eee;
   border-radius: 12px;
-  padding: 20px;
+  padding: 30px;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  min-height: 250px;
-  flex-direction: column;
-}
-
-/* CELL 1: Tên & Ngày */
-.cell-info {
+  min-height: 400px;
   text-align: center;
 }
+
+/* CELL 1: Tên, Ngày & Thời gian */
+.cell-info-time {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+}
+
 .user-name-xl {
   color: #1890ff;
   font-weight: 800;
   font-size: 3em;
   line-height: 1.1;
-  margin-bottom: 15px;
   word-break: break-word;
 }
+
 .user-date-xl {
   color: #555;
   font-weight: 600;
-  font-size: 1.8em;
+  font-size: 2em;
   background: #f0f2f5;
-  padding: 5px 15px;
+  padding: 8px 20px;
   border-radius: 8px;
 }
 
-/* CELL 2: Vòng tròn Điểm */
-.cell-score {
-  background: #fcfcfc;
-}
-.circle-standard {
-  position: relative;
-  width: 220px;
-  height: 220px;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
-}
-
-.score-circle-bg {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background: conic-gradient(var(--bg-color) var(--percent), #eee 0);
-  position: absolute;
-  top: 0; left: 0;
-}
-
-.score-inner {
-  width: 170px;
-  height: 170px;
-  background: white;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2;
-  font-size: 42px;
-  font-weight: 800;
+.user-time-range {
   color: #333;
+  font-weight: 700;
+  font-size: 1.8em;
+  background: #f8f9fa;
+  padding: 8px 20px;
+  border-radius: 8px;
+  border: 2px dashed #ddd;
 }
 
-/* CELL 3: Biểu đồ tròn */
-.cell-chart {
+/* CELL 2: Biểu đồ kép kết hợp */
+.cell-combined-chart {
+  display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  gap: 20px;
 }
-.chart-wrapper {
+
+.combined-chart-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+}
+
+/* Biểu đồ kép: vòng ngoài (vành khuyên) + vòng trong (điểm %) */
+.combined-chart {
   position: relative;
-  margin-bottom: 15px;
+  width: 280px;
+  height: 280px;
+  margin: 0 auto;
 }
-.pie-chart-standard {
-  width: 220px;
-  height: 220px;
+
+/* Vòng ngoài: vành khuyên Đúng/Sai/Chưa làm */
+.outer-ring {
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
   background: conic-gradient(
-    var(--chart-correct) 0% 0%, 
-    var(--chart-wrong) 0% 0%, 
+    var(--chart-correct) 0% 0%,
+    var(--chart-wrong) 0% 0%,
     var(--chart-unanswered) 0% 100%
   );
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  position: relative;
 }
-.pie-chart-standard::after {
-  content: "";
+
+/* Tạo hiệu ứng vành khuyên */
+.outer-ring::after {
+  content: '';
   position: absolute;
-  width: 110px;
-  height: 110px;
+  width: 65%;
+  height: 65%;
   background: white;
   border-radius: 50%;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
 }
+
+/* Vòng trong: điểm phần trăm */
+.inner-circle {
+  position: absolute;
+  width: 55%;
+  height: 55%;
+  background: var(--score-color, #faad14);
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 42px;
+  font-weight: 800;
+  color: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 2;
+}
+
 .chart-legend-standard {
   display: flex;
   gap: 15px;
@@ -276,36 +291,6 @@ h1 { color: #2c3e50; margin-bottom: 10px; font-size: 2.2em; }
 }
 .legend-item { display: flex; align-items: center; gap: 8px; }
 .legend-color { width: 18px; height: 18px; border-radius: 4px; }
-
-/* CELL 4: Thời gian */
-.cell-time {
-  justify-content: center;
-  background: #fdfdfd;
-}
-.time-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 40px;
-}
-.time-block {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.time-label {
-  color: #999;
-  font-size: 1.1em;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 8px;
-  font-weight: 700;
-}
-.time-val {
-  color: #2c3e50;
-  font-size: 2.2em;
-  font-weight: 800;
-}
 
 /* --- CHI TIẾT BÀI LÀM --- */
 .details-section {
@@ -333,12 +318,11 @@ h1 { color: #2c3e50; margin-bottom: 10px; font-size: 2.2em; }
   .grade-grid { grid-template-columns: 1fr; }
   .quiz-header { flex-direction: column; gap: 10px; text-align: center; }
   .result-grid { grid-template-columns: 1fr; }
-  .user-name-xl { font-size: 2em; }
-  .user-date-xl { font-size: 1.2em; }
-  .score-inner { font-size: 32px; }
-  .circle-standard, .pie-chart-standard { width: 180px; height: 180px; }
-  .pie-chart-standard::after { width: 90px; height: 90px; }
-  .time-val { font-size: 1.8em; }
+  .user-name-xl { font-size: 2.2em; }
+  .user-date-xl { font-size: 1.5em; }
+  .user-time-range { font-size: 1.4em; }
+  .inner-circle { font-size: 32px; }
+  .combined-chart { width: 240px; height: 240px; }
   .timer-box { font-size: 28px; min-width: 120px; padding: 6px 15px; }
 }
 </style>
@@ -428,51 +412,35 @@ h1 { color: #2c3e50; margin-bottom: 10px; font-size: 2.2em; }
         <!-- Grid Layout 2x2 -->
         <div class="result-grid">
             
-            <!-- CELL 1: Tên & Ngày -->
-            <div class="cell cell-info">
-                <div class="user-name-xl" id="res-name">Họ tên</div>
+            <!-- CELL 1: Tên, Ngày & Thời gian -->
+            <div class="cell cell-info-time">
+                <div class="user-name-xl" id="res-name">HULE</div>
                 <div class="user-date-xl" id="res-date-only">03/02/2026</div>
+                <div class="user-time-range" id="res-time-range">15:41 - 15:42</div>
             </div>
 
-            <!-- CELL 2: Vòng tròn Điểm số -->
-            <div class="cell cell-score">
-                <div class="circle-standard">
-                    <div class="score-circle-bg" id="score-circle-bg" style="--percent: 50%; --bg-color: var(--score-yellow);"></div>
-                    <div class="score-inner" id="score-text">50%</div>
-                </div>
-            </div>
-
-            <!-- CELL 3: Biểu đồ tròn & Giải thích -->
-            <div class="cell cell-chart">
-                <div class="chart-wrapper">
-                    <div class="pie-chart-standard" id="pie-chart"></div>
-                </div>
-                <div class="chart-legend-standard">
-                    <div class="legend-item">
-                        <div class="legend-color" style="background: var(--chart-correct);"></div>
-                        <span>Đúng: <strong id="legend-correct">0</strong></span>
+            <!-- CELL 2: Biểu đồ kép kết hợp -->
+            <div class="cell cell-combined-chart">
+                <div class="combined-chart-wrapper">
+                    <div class="combined-chart">
+                        <div class="outer-ring" id="outer-ring"></div>
+                        <div class="inner-circle" id="inner-circle">
+                            <div id="score-text">50%</div>
+                        </div>
                     </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background: var(--chart-wrong);"></div>
-                        <span>Sai: <strong id="legend-wrong">0</strong></span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background: var(--chart-unanswered);"></div>
-                        <span>Chưa làm: <strong id="legend-unanswered">0</strong></span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- CELL 4: Thời gian -->
-            <div class="cell cell-time">
-                <div class="time-container">
-                    <div class="time-block">
-                        <span class="time-label">Bắt đầu</span>
-                        <span class="time-val" id="res-start">13:33</span>
-                    </div>
-                    <div class="time-block">
-                        <span class="time-label">Nộp bài</span>
-                        <span class="time-val" id="res-end">13:33</span>
+                    <div class="chart-legend-standard">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: var(--chart-correct);"></div>
+                            <span>Đúng: <strong id="legend-correct">0</strong></span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: var(--chart-wrong);"></div>
+                            <span>Sai: <strong id="legend-wrong">0</strong></span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: var(--chart-unanswered);"></div>
+                            <span>Chưa làm: <strong id="legend-unanswered">0</strong></span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -500,7 +468,7 @@ h1 { color: #2c3e50; margin-bottom: 10px; font-size: 2.2em; }
 <script>
 // --- CẤU TRÚC DỮ LIỆU (GIỮ NGUYÊN) ---
 const LESSON_NAMES = {
-  'T6B1': 'Bài 1. Tập hợp', 'T6B2': 'Bài 2. Cách ghi số tự nhiên', 'T6B3': 'Bài 3. Thứ tự trong tập hợp các số tự nhiên', 'T6B4': 'Bài 4. Phép cộng và phép trừ số tự nhiên', 'T6B5': 'Bài 5. Phép nhân và phép chia số tự nhiên', 'T6B6': 'Bài 6. Lũy thừa với số mũ tự nhiên', 'T6B7': 'Bài 7. Thứ tự thực hiện các phép tính', 'T6P1': 'Phần 1. Bài tập cuối chương I',
+  'T6B1': 'Bài 1. Tập hợp', 'T6B2': 'Bài 2. Cách ghi số tự nhiên', 'T6B3': 'Bài 3. Thứ tự trong tập hợp các số tự nhiên', 'T6B4': 'Bài 4. Phép cộng và phép trừ số tự nhiên', 'T6B5': 'Bài 5. Phép nhân và phép chia số tự nhiên', 'T6B6': 'Bài 6. Lũy thừa với số mũ tự nhiên', 'T7B7': 'Bài 7. Thứ tự thực hiện các phép tính', 'T6P1': 'Phần 1. Bài tập cuối chương I',
   'T6B8': 'Bài 8. Quan hệ chia hết và tính chất', 'T6B9': 'Bài 9. Dấu hiệu chia hết', 'T6B10': 'Bài 10. Số nguyên tố', 'T6B11': 'Bài 11. Ước chung. Ước chung lớn nhất', 'T6B12': 'Bài 12. Bội chung. Bội chung nhỏ nhất', 'T6P2': 'Phần 2. Bài tập cuối chương II',
   'T6B13': 'Bài 13. Tập hợp các số nguyên', 'T6B14': 'Bài 14. Phép cộng và phép trừ số nguyên', 'T6B15': 'Bài 15. Quy tắc dấu ngoặc', 'T6B16': 'Bài 16. Phép nhân số nguyên', 'T6B17': 'Bài 17. Phép chia hết. Ước và bội của một số nguyên', 'T6P3': 'Phần 3. Bài tập cuối chương III',
   'T6B18': 'Bài 18. Hình tam giác đều. Hình vuông. Hình lục giác đều', 'T6B19': 'Bài 19. Hình chữ nhật. Hình thoi. Hình bình hành. Hình thang cân', 'T6B20': 'Bài 20. Chu vi và diện tích của một số tứ giác đã học', 'T6P4': 'Phần 4. Bài tập cuối chương IV',
@@ -567,7 +535,7 @@ const GRADE_STRUCTURES = {
   ],
   '8': [
     { title: 'CHƯƠNG I. ĐA THỨC', lessons: ['T8B1','T8B2','T8B3','T8B4','T8B5','T8P1'] },
-    { title: 'CHƯƠNG II. HẰNG ĐẲNG THỨC ĐÁNG NHỚ VÀ ỨNG DỤNG', lessons: ['T8B6','T8B7','T8B8','T8B9','T8P2'] },
+    { title: 'CHƯƠNG II. HẰNG ĐẲNG THỨC ĐÁNG NHỚ VÀ ỨNG DỮNG', lessons: ['T8B6','T8B7','T8B8','T8B9','T8P2'] },
     { title: 'CHƯƠNG III. TỨ GIÁC', lessons: ['T8B10','T8B11','T8B12','T8B13','T8B14','T8P3'] },
     { title: 'CHƯƠNG IV. ĐỊNH LÍ THALES', lessons: ['T8B15','T8B16','T8B17','T8P4'] },
     { title: 'CHƯƠNG V. DỮ LIỆU VÀ BIỂU ĐỒ', lessons: ['T8B18','T8B19','T8B20','T8P5'] },
@@ -583,7 +551,7 @@ const GRADE_STRUCTURES = {
     { title: 'CHƯƠNG III. CĂN BẬC HAI VÀ CĂN BẬC BA', lessons: ['T9B7','T9B8','T9B9','T9B10','T9P3'] },
     { title: 'CHƯƠNG IV. HỆ THỨC LƯỢNG TRONG TAM GIÁC VUÔNG', lessons: ['T9B11','T9B12','T9P4'] },
     { title: 'CHƯƠNG V. ĐƯỜNG TRÒN', lessons: ['T9B13','T9B14','T9B15','T9B16','T9B17','T9P5'] },
-    { title: 'CHƯƠNG VI. HÀM SỐ y = ax² (a ≠ 0). PHƯƠNG TRÌNH BẶC HAI MỘT ẨN.', lessons: ['T9B18','T9B19','T9B20','T9B21','T9P6'] },
+    { title: 'CHƯƠNG VI. HÀM SỐ y = ax² (a ≠ 0). PHƯƠNG TRÌNH BẬC HAI MỘT ẨN.', lessons: ['T9B18','T9B19','T9B20','T9B21','T9P6'] },
     { title: 'CHƯƠNG VII. TẦN SỐ VÀ TẦN SỐ TƯƠNG ĐỐI', lessons: ['T9B22','T9B23','T9B24','T9P7'] },
     { title: 'CHƯƠNG VIII. XÁC SUẤT CỦA BIẾN CỐ TRONG MỘT SỐ MÔ HÌNH XÁC SUẤT ĐƠN GIẢN', lessons: ['T9B25','T9B26','T9P8'] },
     { title: 'CHƯƠNG IX. ĐƯỜNG TRÒN NGOẠI TIẾP VÀ ĐƯỜNG TRÒN NỘI TIẾP', lessons: ['T9B27','T9B28','T9B29','T9B30','T9P9'] },
@@ -889,14 +857,40 @@ function calculateResult() {
   document.getElementById('res-title').textContent = `KẾT QUẢ ÔN TẬP TOÁN ${currentGrade}`;
   document.getElementById('res-subtitle').textContent = `${currentBankCode}: ${LESSON_NAMES[currentBankCode]}`;
 
-  // CELL 1
+  // CELL 1: Thông tin người dùng
   document.getElementById('res-name').textContent = document.getElementById('student-name-input').value;
+  
+  // Định dạng ngày
   const d = endTime.getDate().toString().padStart(2, '0');
   const m = (endTime.getMonth() + 1).toString().padStart(2, '0');
   const y = endTime.getFullYear();
   document.getElementById('res-date-only').textContent = `${d}/${m}/${y}`;
+  
+  // Định dạng thời gian bắt đầu - kết thúc
+  const formatTimeHHMM = (date) => {
+    const h = date.getHours().toString().padStart(2, '0');
+    const min = date.getMinutes().toString().padStart(2, '0');
+    return `${h}:${min}`;
+  };
+  const startStr = formatTimeHHMM(startTime);
+  const endStr = formatTimeHHMM(endTime);
+  document.getElementById('res-time-range').textContent = `${startStr} - ${endStr}`;
 
-  // CELL 2
+  // CELL 2: Biểu đồ kép
+  // Tính tỷ lệ cho biểu đồ vành khuyên ngoài
+  const pCorrect = Math.round((correctCount / total) * 100);
+  const pWrong = Math.round((wrongCount / total) * 100);
+  const pUnanswered = 100 - pCorrect - pWrong; 
+  
+  // Cập nhật biểu đồ vành khuyên ngoài
+  const outerRing = document.getElementById('outer-ring');
+  outerRing.style.background = `conic-gradient(
+    var(--chart-correct) 0% ${pCorrect}%,
+    var(--chart-wrong) ${pCorrect}% ${pCorrect + pWrong}%,
+    var(--chart-unanswered) ${pCorrect + pWrong}% 100%
+  )`;
+  
+  // Xác định màu cho vòng trong (điểm phần trăm)
   let scoreColor = 'var(--score-red)';
   if (percent >= 100) scoreColor = 'var(--score-purple)';
   else if (percent >= 90) scoreColor = 'var(--score-blue)';
@@ -904,34 +898,16 @@ function calculateResult() {
   else if (percent >= 70) scoreColor = 'var(--score-green)';
   else if (percent >= 50) scoreColor = 'var(--score-yellow)';
   
-  document.getElementById('score-circle-bg').style.setProperty('--percent', `${percent}%`);
-  document.getElementById('score-circle-bg').style.setProperty('--bg-color', scoreColor);
+  // Cập nhật vòng trong
+  const innerCircle = document.getElementById('inner-circle');
+  innerCircle.style.setProperty('--score-color', scoreColor);
+  innerCircle.style.backgroundColor = scoreColor;
   document.getElementById('score-text').textContent = `${percent}%`;
-
-  // CELL 3
-  const pCorrect = Math.round((correctCount / total) * 100);
-  const pWrong = Math.round((wrongCount / total) * 100);
-  const pUnanswered = 100 - pCorrect - pWrong; 
   
-  const pieChart = document.getElementById('pie-chart');
-  pieChart.style.background = `conic-gradient(
-    var(--chart-correct) 0% ${pCorrect}%,
-    var(--chart-wrong) ${pCorrect}% ${pCorrect + pWrong}%,
-    var(--chart-unanswered) ${pCorrect + pWrong}% 100%
-  )`;
-  
+  // Cập nhật chú thích
   document.getElementById('legend-correct').textContent = correctCount;
   document.getElementById('legend-wrong').textContent = wrongCount;
   document.getElementById('legend-unanswered').textContent = unanswered;
-
-  // CELL 4
-  const formatTimeHHMM = (date) => {
-    const h = date.getHours().toString().padStart(2, '0');
-    const min = date.getMinutes().toString().padStart(2, '0');
-    return `${h}:${min}`;
-  };
-  document.getElementById('res-start').textContent = formatTimeHHMM(startTime);
-  document.getElementById('res-end').textContent = formatTimeHHMM(endTime);
 }
 
 function retryQuiz() { startQuiz(); }
