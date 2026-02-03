@@ -146,14 +146,27 @@ h1 { color: #2c3e50; margin-bottom: 10px; font-size: 2.2em; }
 .options-list { list-style: none; }
 .option-item { padding: 18px 25px; margin-bottom: 15px; background: white; border: 2px solid #eee; border-radius: 10px; cursor: pointer; font-size: 20px; transition: all 0.2s; }
 .option-item:hover { background: #f0f8ff; border-color: #3498db; }
-.option-item.selected { background: #d1ecf1; border-color: #17a2b8; font-weight: bold; }
 
-/* Hiệu ứng chọn đáp án cực ngắn */
-.option-item.selected-temp {
-  background: #d1ecf1;
+/* Ô hướng dẫn với hiệu ứng chọn */
+.instruction-box {
+  text-align: center;
+  margin-top: 20px;
+  padding: 15px;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  background-color: #f8f9fa;
+  transition: all 0.3s ease;
+  font-size: 18px;
+  color: #666;
+}
+
+.instruction-box.selected {
+  background-color: #d1ecf1;
   border-color: #17a2b8;
+  color: #0c5460;
   font-weight: bold;
-  transition: all 0.1s !important;
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 /* --- GIAO DIỆN 4: KẾT QUẢ - ĐÃ CẬP NHẬT --- */
@@ -419,6 +432,13 @@ h1 { color: #2c3e50; margin-bottom: 10px; font-size: 2.2em; }
     margin-bottom: 10px;
   }
   
+  /* Ô hướng dẫn */
+  .instruction-box {
+    padding: 12px;
+    font-size: 16px;
+    margin-top: 15px;
+  }
+  
   /* Các nút */
   .btn {
     padding: 20px 15px;
@@ -508,6 +528,12 @@ h1 { color: #2c3e50; margin-bottom: 10px; font-size: 2.2em; }
     font-size: 0.9em;
   }
   
+  /* Ô hướng dẫn */
+  .instruction-box {
+    padding: 10px;
+    font-size: 15px;
+  }
+  
   /* Giảm padding cho các nút trên màn hình nhỏ */
   .btn {
     padding: 16px 12px;
@@ -590,8 +616,8 @@ h1 { color: #2c3e50; margin-bottom: 10px; font-size: 2.2em; }
       <ul class="options-list" id="options-list"></ul>
     </div>
 
-    <div style="text-align: center; margin-top: 20px;">
-      <p id="quiz-instruction" style="color: #888;">Chọn đáp án để tiếp tục</p>
+    <div class="instruction-box" id="instruction-box">
+      <p id="quiz-instruction">Chọn đáp án để tiếp tục</p>
     </div>
   </div>
 
@@ -985,21 +1011,21 @@ function renderQuestion() {
   document.getElementById('question-text').innerHTML = `<strong>Câu ${currentQuestionIndex + 1}/${currentQuestions.length}:</strong> ${q.content}`;
   const list = document.getElementById('options-list'); 
   
-  // Xóa toàn bộ đáp án cũ và reset trạng thái
+  // Xóa toàn bộ đáp án cũ
   list.innerHTML = '';
   
   q.options.forEach(opt => {
     const li = document.createElement('li');
-    li.className = 'option-item'; // Reset class, không có class 'selected' hay 'selected-temp'
+    li.className = 'option-item';
     li.innerHTML = `<strong>${opt.label}.</strong> ${opt.text}`;
     li.onclick = () => selectAnswer(opt.label);
     list.appendChild(li);
   });
   
-  // Reset pointer events cho tất cả các đáp án
-  document.querySelectorAll('.option-item').forEach(el => {
-    el.style.pointerEvents = 'auto';
-  });
+  // Reset ô hướng dẫn
+  const instructionBox = document.getElementById('instruction-box');
+  instructionBox.classList.remove('selected');
+  document.getElementById('quiz-instruction').textContent = 'Chọn đáp án để tiếp tục';
   
   if (window.MathJax) { 
     setTimeout(() => MathJax.typesetPromise(), 100); 
@@ -1009,22 +1035,22 @@ function renderQuestion() {
 function selectAnswer(label) {
   userAnswers[currentQuestionIndex] = label;
   
-  // Thêm class 'selected-temp' cho đáp án được chọn (hiệu ứng rất ngắn)
+  // Vô hiệu hóa tất cả đáp án
   document.querySelectorAll('.option-item').forEach(el => {
-    el.style.pointerEvents = 'none'; // Vô hiệu hóa tất cả đáp án
-    if (el.innerHTML.startsWith(`<strong>${label}.`)) { 
-      el.classList.add('selected-temp'); 
-    }
+    el.style.pointerEvents = 'none';
   });
   
-  // Xóa hiệu ứng sau 100ms (1/10 giây) và chuyển câu
+  // Hiệu ứng ở ô hướng dẫn
+  const instructionBox = document.getElementById('instruction-box');
+  const instructionText = document.getElementById('quiz-instruction');
+  instructionText.textContent = `Đã chọn đáp án ${label}, chuyển câu sau 0.5s...`;
+  instructionBox.classList.add('selected');
+  
   setTimeout(() => {
-    // Xóa class 'selected-temp' trước khi chuyển câu
-    document.querySelectorAll('.option-item').forEach(el => {
-      el.classList.remove('selected-temp');
-    });
-    nextQuestion(); 
-  }, 100); // Giảm từ 500ms xuống 100ms
+    // Xóa hiệu ứng
+    instructionBox.classList.remove('selected');
+    nextQuestion();
+  }, 500);
 }
 
 function nextQuestion() { 
