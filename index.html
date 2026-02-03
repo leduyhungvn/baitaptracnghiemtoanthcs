@@ -148,6 +148,14 @@ h1 { color: #2c3e50; margin-bottom: 10px; font-size: 2.2em; }
 .option-item:hover { background: #f0f8ff; border-color: #3498db; }
 .option-item.selected { background: #d1ecf1; border-color: #17a2b8; font-weight: bold; }
 
+/* Hiệu ứng chọn đáp án cực ngắn */
+.option-item.selected-temp {
+  background: #d1ecf1;
+  border-color: #17a2b8;
+  font-weight: bold;
+  transition: all 0.1s !important;
+}
+
 /* --- GIAO DIỆN 4: KẾT QUẢ - ĐÃ CẬP NHẬT --- */
 .result-container {
   display: flex;
@@ -982,7 +990,7 @@ function renderQuestion() {
   
   q.options.forEach(opt => {
     const li = document.createElement('li');
-    li.className = 'option-item'; // Reset class, không có class 'selected'
+    li.className = 'option-item'; // Reset class, không có class 'selected' hay 'selected-temp'
     li.innerHTML = `<strong>${opt.label}.</strong> ${opt.text}`;
     li.onclick = () => selectAnswer(opt.label);
     list.appendChild(li);
@@ -1001,21 +1009,22 @@ function renderQuestion() {
 function selectAnswer(label) {
   userAnswers[currentQuestionIndex] = label;
   
-  // Thêm class 'selected' cho đáp án được chọn
+  // Thêm class 'selected-temp' cho đáp án được chọn (hiệu ứng rất ngắn)
   document.querySelectorAll('.option-item').forEach(el => {
     el.style.pointerEvents = 'none'; // Vô hiệu hóa tất cả đáp án
     if (el.innerHTML.startsWith(`<strong>${label}.`)) { 
-      el.classList.add('selected'); 
+      el.classList.add('selected-temp'); 
     }
   });
   
+  // Xóa hiệu ứng sau 100ms (1/10 giây) và chuyển câu
   setTimeout(() => {
-    // Xóa class 'selected' trước khi chuyển câu (tùy chọn)
+    // Xóa class 'selected-temp' trước khi chuyển câu
     document.querySelectorAll('.option-item').forEach(el => {
-      el.classList.remove('selected');
+      el.classList.remove('selected-temp');
     });
     nextQuestion(); 
-  }, 500);
+  }, 100); // Giảm từ 500ms xuống 100ms
 }
 
 function nextQuestion() { 
